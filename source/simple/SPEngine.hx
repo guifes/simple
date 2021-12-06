@@ -49,10 +49,6 @@ class SPEngine
 
         SPEngine.gameZoom = Lib.current.stage.stageWidth / gameWidth;
 
-        {
-		    FxHub.initilize();
-        }
-
 		// HaxeUI
         {
             Toolkit.autoScale = false;

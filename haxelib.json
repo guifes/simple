@@ -9,12 +9,11 @@
 	"contributors": ["guifes"],
 	"classPath": "source",
 	"dependencies": {
-		"flixel" : "",
-		"flixel-addons": "",
 		"tink_core": "",
 		"lime": "",
 		"openfl": "",
-		"polygonal-ds": "",
-		"polygonal-core": ""
+		"polygonal-core": "",
+		"json2object": "",
+		"haxe-utils": ""
 	}
 }
