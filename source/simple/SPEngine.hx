@@ -1,17 +1,15 @@
 package simple;
 
-import simple.display.shader.SPShaderHub;
+import openfl.Assets;
+import openfl.Lib;
+import openfl.display.Sprite;
+import openfl.events.Event;
+import openfl.events.EventDispatcher;
+import simple.debug.SPPerformanceWidget;
 import simple.display.SPBitmapCache;
 import simple.display.SPState;
+import simple.display.shader.SPShaderHub;
 import simple.input.SPMouse;
-import fx.FxHub;
-import simple.debug.SPPerformanceWidget;
-import haxe.Resource;
-import openfl.Assets;
-import openfl.events.Event;
-import openfl.Lib;
-import haxe.ui.Toolkit;
-import openfl.display.Sprite;
 #if mobile
 import simple.input.SPTouchManager;
 #end
@@ -34,7 +32,7 @@ class SPEngine
 	static var _currentState: SPState;
 
     @:access(simple.display.SPState)
-	public static function start(appContainer: Sprite, gameWidth: Int, initialState: SPState, debug: Bool)
+	public static function start(appContainer: Sprite, gameWidth: Int, initialState: Void -> SPState, debug: Bool = true)
 	{
         SPEngine.root = appContainer;
         SPEngine.bitmapCache = new SPBitmapCache();
@@ -48,22 +46,6 @@ class SPEngine
         SPEngine.gameHeight = getGameHeight(gameWidth);
 
         SPEngine.gameZoom = Lib.current.stage.stageWidth / gameWidth;
-
-		// HaxeUI
-        {
-            Toolkit.autoScale = false;
-            Toolkit.scale = SPEngine.gameZoom;
-            Toolkit.init();
-            Toolkit.styleSheet.parse(Assets.getText(AssetPaths.main__css));
-            Toolkit.styleSheet.parse(Assets.getText(AssetPaths.shop__css));
-            Toolkit.styleSheet.parse(Assets.getText(AssetPaths.stats__css));
-        }
-		
-        // CastleDB initialization
-        {
-		    Data.load(Resource.getString("general.cdb"));
-		    ImageData.load(Resource.getString("general.img"));
-        }
 
 		// Initialize game
         {
@@ -92,7 +74,7 @@ class SPEngine
         
 		// Intitial state
 
-		switchState(initialState);
+		switchState(initialState());
 
 		// Main loop
 
