@@ -1,14 +1,14 @@
 package simple.display;
 
-import openfl.geom.Point;
-import openfl.display.Tilemap;
-import openfl.events.TimerEvent;
-import openfl.utils.Timer;
-import openfl.display.Tile;
-import openfl.display.Tileset;
-import openfl.geom.Rectangle;
 import openfl.display.BitmapData;
 import openfl.display.Sprite;
+import openfl.display.Tile;
+import openfl.display.Tilemap;
+import openfl.display.Tileset;
+import openfl.events.TimerEvent;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
+import openfl.utils.Timer;
 
 #if debug
 import openfl.display.Shape;
@@ -277,6 +277,8 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 		_debugSprite.graphics.clear();
         _debugSprite.graphics.lineStyle(1, 0xFF0000, 0.5);
 		_debugSprite.graphics.drawRect(0, 0, tilemap.width, tilemap.height);
+		_debugSprite.graphics.lineStyle(1, 0xFFFF00, 0.5);
+		_debugSprite.graphics.drawRect(_tile.x, _tile.y, _tile.width, _tile.height);
 	}
 
     public function set_debug(value: Bool)
