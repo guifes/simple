@@ -275,7 +275,7 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 	function updateDebug(tilemap: Tilemap)
 	{
 		_debugSprite.graphics.clear();
-        _debugSprite.graphics.lineStyle(1, 0xFF0000, 0.5);
+        _debugSprite.graphics.lineStyle(1, 0x0000FF, 0.5);
 		_debugSprite.graphics.drawRect(0, 0, tilemap.width, tilemap.height);
 		_debugSprite.graphics.lineStyle(1, 0xFFFF00, 0.5);
 		_debugSprite.graphics.drawRect(_tile.x, _tile.y, _tile.width, _tile.height);
