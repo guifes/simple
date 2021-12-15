@@ -1,8 +1,8 @@
 package simple.display.shader;
 
 import haxe.Exception;
-import openfl.utils.ByteArray;
 import openfl.display.Shader;
+import openfl.utils.ByteArray;
 
 #if !openfl_debug
 @:fileXml('tags="haxe,release"')
@@ -84,6 +84,6 @@ class SPShader extends Shader
 
     public function update(elapsed: Float)
     {
-		throw new Exception("Unimplemented");
+		
     }
 }
