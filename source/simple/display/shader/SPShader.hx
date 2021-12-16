@@ -36,6 +36,7 @@ class SPShader extends Shader
 
 		}
     ")
+	
 	@:glFragmentHeader("
         varying vec2 openfl_TextureCoordv;
 
