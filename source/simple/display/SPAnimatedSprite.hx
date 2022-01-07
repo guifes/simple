@@ -207,7 +207,7 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 		}
 	}
 
-	public function play(animationName: String): Future<Noise>
+	public function playAnimation(animationName:String)
 	{
 		currentAnimation = animationName;
 
@@ -215,18 +215,23 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 
 		_currentFrameIndex = 0;
 		_currentRepeatCount = 0;
-		
-		var id = _currentAnimation.frames[_currentFrameIndex]; 
-		
+
+		var id = _currentAnimation.frames[_currentFrameIndex];
+
 		setFrameByIndex(id);
-		
+
 		_timer.stop();
 		_timer.delay = 1000 / _currentAnimation.frameRate;
 		_timer.start();
+	}
 
+	public function playAwaitableAnimation(animationName: String): Future<Noise>
+	{
 		return new Future(
 			cb ->
 			{
+				playAnimation(animationName);
+				
 				if(_currentAnimation.repeatCount < 0)
 					cb(Noise);
 				else
@@ -251,8 +256,13 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 			{
 				_timer.stop();
 				
-				if(_currentAnimationFinishCallback != null) _currentAnimationFinishCallback(Noise);
-				
+				if(_currentAnimationFinishCallback != null)
+				{
+					var temp = _currentAnimationFinishCallback;
+					_currentAnimationFinishCallback = null;
+					temp(Noise);
+				}
+
 				return;
 			}
 		}
