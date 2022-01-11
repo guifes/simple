@@ -16,7 +16,7 @@ import simple.input.SPTouchManager;
 
 class SPEngine
 {
-    public static var bitmapCache(default, null): SPBitmapCache;
+    // public static var bitmapCache(default, null): SPBitmapCache;
 	public static var gameWidth(default, null): Int;
 	public static var gameHeight(default, null): Int;
     public static var gameZoom(default, null): Float;
@@ -35,7 +35,7 @@ class SPEngine
 	public static function start(appContainer: Sprite, gameWidth: Int, initialState: Void -> SPState, debug: Bool = true)
 	{
         SPEngine.root = appContainer;
-        SPEngine.bitmapCache = new SPBitmapCache();
+        // SPEngine.bitmapCache = new SPBitmapCache();
         SPEngine.shaderHub = new SPShaderHub();
 #if mobile
         SPEngine.touchManager = new SPTouchManager();
@@ -125,9 +125,6 @@ class SPEngine
         // Clear previous state
         _gameContainer.removeChildren();
         _uiContainer.removeChildren();
-
-        // Clear cache
-        bitmapCache.clear();
 
         // Changing state
         _currentState = state;
