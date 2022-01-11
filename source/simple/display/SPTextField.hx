@@ -5,8 +5,9 @@ import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.geom.Rectangle;
 import openfl.text.TextField;
+import openfl.text.TextFieldAutoSize;
 import openfl.text.TextFormat;
-import shader.FxSpriteShader;
+import simple.display.shader.SPTextFieldShader;
 
 class SPTextField extends Bitmap
 {
@@ -18,6 +19,11 @@ class SPTextField extends Bitmap
     public var defaultTextFormat(get, set):TextFormat;
     public var htmlText(get, set):String;
     public var text(get, set):String;
+	public var autoSize(get, set):TextFieldAutoSize;
+	public var background(get, set):Bool;
+	public var backgroundColor(get, set):Int;
+	public var border(get, set):Bool;
+	public var borderColor(get, set):Int;
 
     private function get_textColor():Int
     {
@@ -64,6 +70,56 @@ class SPTextField extends Bitmap
         return _textField.text;
     }
 
+	private function get_autoSize():TextFieldAutoSize
+    {
+		return _textField.autoSize;
+	}
+
+	private function set_autoSize(value:TextFieldAutoSize):TextFieldAutoSize
+    {
+		return _textField.autoSize = value;
+	}
+
+	private function get_background():Bool
+    {
+		return _textField.background;
+	}
+
+	private function set_background(value:Bool):Bool
+	{
+		return _textField.background = value;
+	}
+
+	private function get_backgroundColor():Int
+    {
+		return _textField.backgroundColor;
+	}
+
+	private function set_backgroundColor(value:Int):Int
+    {
+		return _textField.backgroundColor = value;
+	}
+
+	private function get_border():Bool
+    {
+		return _textField.border;
+	}
+
+	private function set_border(value:Bool):Bool
+    {
+		return _textField.border = value;
+	}
+
+	private function get_borderColor():Int
+    {
+		return _textField.borderColor;
+	}
+
+	private function set_borderColor(value:Int):Int
+    {
+		return _textField.borderColor = value;
+	}
+
     private function set_text(value:String):String
     {
         var v = _textField.text = value;
@@ -105,15 +161,15 @@ class SPTextField extends Bitmap
         super();
         
         this.smoothing = true;
-        this.shader = new FxSpriteShader();
+        this.shader = new SPTextFieldShader();
         
         this._textField = new TextField();
     }
 
     private function set_outlineColor(value: SPColor): SPColor
     {
-        var s: FxSpriteShader = cast this.shader;
-        s.setBorderColor(value);
+        var s: SPTextFieldShader = cast this.shader;
+        s.outlineColor = value;
         return outlineColor = value;
     }
 
