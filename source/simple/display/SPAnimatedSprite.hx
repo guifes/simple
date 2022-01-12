@@ -104,14 +104,6 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 		return point;
 	}
 
-	public function getMidpoint()
-	{
-		return new Point(
-			this.x + this.width * 0.5,
-			this.y + this.height * 0.5
-		);
-	}
-
 	public function loadFrames(bitmapData: BitmapData, framesData: Array<SPFrameData>)
 	{
 		_frames = new Array<SPFrame>();
