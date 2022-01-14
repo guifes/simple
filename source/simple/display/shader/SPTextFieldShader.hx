@@ -11,7 +11,7 @@ class SPTextFieldShader extends SPShader
         // Outline
         uniform vec4 _outline_color;
         
-        vec4 outline(sampler2D tex, vec2 textureCoord, vec2 textureSize, vec4 fragColor, vec4 textColor)
+        vec4 outline(sampler2D tex, vec2 textureCoord, vec2 textureSize, vec4 fragColor, vec4 textColor, float globalAlpha)
         {
             float a_buffer = 0.0;
 
@@ -47,7 +47,7 @@ class SPTextFieldShader extends SPShader
 
             vec4 output_color = fragColor * gate;
 
-            output_color += (_outline_color * _outline_color.a) * (1.0 - gate) * a_buffer;
+            output_color += (_outline_color * _outline_color.a) * (1.0 - gate) * a_buffer * globalAlpha;
             
             return output_color;
         }
@@ -56,7 +56,7 @@ class SPTextFieldShader extends SPShader
         {
             #pragma body
             
-            gl_FragColor = outline(openfl_Texture, openfl_TextureCoordv, openfl_TextureSize, gl_FragColor, color);
+            gl_FragColor = outline(openfl_Texture, openfl_TextureCoordv, openfl_TextureSize, gl_FragColor, color, openfl_Alphav);
         }
     ')
 

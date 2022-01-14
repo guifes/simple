@@ -1,14 +1,12 @@
 package simple.display;
 
-import simple.ISPDestroyable;
 import haxe.Constraints.Constructible;
 import haxe.Exception;
 import openfl.display.DisplayObject;
 
 @:generic
-class SPPoolGroup<T: DisplayObject & Constructible<Void->Void> & ISPDestroyable> extends SPSpriteGroup
+class SPPoolGroup<T: DisplayObject & Constructible<Void->Void>> extends SPSpriteGroup
 {
-    var _generator: Void -> T;
     var _dead: Array<T>;
 
     public function new(initialCapacity: Int = 0)
@@ -26,12 +24,11 @@ class SPPoolGroup<T: DisplayObject & Constructible<Void->Void> & ISPDestroyable>
         return item;
     }
 
-    public function recycle(item: T)
+    public function putBack(item: T)
     {
         if(!this.contains(item))
             throw new Exception("Trying to recycle item from outside of the pool.");
-
-        item.destroy();
+        
         this.remove(item);
         _dead.push(item);
     }

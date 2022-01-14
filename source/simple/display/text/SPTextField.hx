@@ -1,4 +1,4 @@
-package simple.display;
+package simple.display.text;
 
 import openfl.Assets;
 import openfl.display.Bitmap;
@@ -154,14 +154,13 @@ class SPTextField extends Bitmap
 
     public var outlineColor(default, set): SPColor;
 
-    private var _textField: TextField;
+    public var _textField: TextField;
 
     public function new()
     {
         super();
         
-        this.smoothing = true;
-        this.shader = new SPTextFieldShader();
+        // this.shader = new SPTextFieldShader();
         
         this._textField = new TextField();
     }
@@ -183,10 +182,10 @@ class SPTextField extends Bitmap
             this.bitmapData.dispose();
         }
 
-        if(this.bitmapData == null)
-            this.bitmapData = new BitmapData(intWidth, intHeight, true, SPColor.TRANSPARENT);   
+		if (this.bitmapData == null || this.bitmapData.width != intWidth || this.bitmapData.height != intHeight)
+            this.bitmapData = new BitmapData(intWidth, intHeight, true, SPColor.TRANSPARENT);
         else
-            this.bitmapData.fillRect(new Rectangle(0, 0, intWidth, intHeight), SPColor.TRANSPARENT);
+			this.bitmapData.fillRect(new Rectangle(0, 0, this.bitmapData.width, this.bitmapData.height), SPColor.TRANSPARENT);
 
         this.bitmapData.draw(_textField);
     }
