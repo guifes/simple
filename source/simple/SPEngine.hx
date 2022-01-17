@@ -60,17 +60,21 @@ class SPEngine
 
 			root.addChild(_gameContainer);
 			root.addChild(_uiContainer);
+        }
 
+        // Handling input events
+        {
 #if mobile
+			_uiContainer.addEventListener(TouchEvent.TOUCH_MOVE, touchManager.onTouchMove);
 			_gameContainer.addEventListener(TouchEvent.TOUCH_MOVE, touchManager.onTouchMove);
 			_gameContainer.addEventListener(TouchEvent.TOUCH_BEGIN, touchManager.onTouchBegin);
 			_gameContainer.addEventListener(TouchEvent.TOUCH_END, touchManager.onTouchEnd);
 #else
+            _uiContainer.addEventListener(MouseEvent.MOUSE_MOVE, mouse.onMouseMove);
 			_gameContainer.addEventListener(MouseEvent.MOUSE_MOVE, mouse.onMouseMove);
 			_gameContainer.addEventListener(MouseEvent.MOUSE_WHEEL, mouse.onMouseWheel);
 			_gameContainer.addEventListener(MouseEvent.MOUSE_UP, mouse.onMouseUp);
 			_gameContainer.addEventListener(MouseEvent.MOUSE_DOWN, mouse.onMouseDown);
-			_gameContainer.addEventListener(MouseEvent.MOUSE_OUT, mouse.onMouseUp);
 #end
         }
         
