@@ -1,12 +1,12 @@
 package simple.input;
 
-import openfl.ui.MultitouchInputMode;
-import openfl.ui.Multitouch;
-import openfl.events.TouchEvent;
-import simple.display.SPCamera;
 import openfl.Lib;
+import openfl.events.TouchEvent;
+import openfl.ui.Multitouch;
+import openfl.ui.MultitouchInputMode;
+import simple.display.SPCamera;
 
-class SPTouchManager implements ISPDestroyable
+class SPTouchManager
 {
     public var touches(default, null): Array<SPTouch>;
 
@@ -23,17 +23,11 @@ class SPTouchManager implements ISPDestroyable
         _inactiveTouches = new Array<SPTouch>();
 
         Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
-
-        Lib.current.stage.addEventListener(TouchEvent.TOUCH_MOVE, onTouchMove);
-        Lib.current.stage.addEventListener(TouchEvent.TOUCH_BEGIN, onTouchBegin);
-        Lib.current.stage.addEventListener(TouchEvent.TOUCH_END, onTouchEnd);
     }
 
-    public function setCamera(value: SPCamera)
+    public function setCamera(camera: SPCamera)
     {
-        removeListeners();
-        _camera = value;
-        addListeners();
+		_camera = camera;
     }
 
     public function update(elapsed: Float)
@@ -56,7 +50,11 @@ class SPTouchManager implements ISPDestroyable
         }
     }
 
-    function onTouchBegin(e: TouchEvent)
+    //////////////////
+    // Touch Events //
+    //////////////////
+
+    public function onTouchBegin(e: TouchEvent)
     {
         var touch: SPTouch;
 
@@ -69,53 +67,28 @@ class SPTouchManager implements ISPDestroyable
         {
             touch = new SPTouch(e.touchPointID);
         }
+        
+		touch.setCamera(_camera);
 
         touches.push(touch);
         _touchesMap.set(e.touchPointID, touch);
         
-        touch.press(e.stageX, e.stageY, _camera);
+        touch.press(e.stageX, e.stageY);
     }
 
-    function onTouchEnd(e: TouchEvent)
+    public function onTouchEnd(e: TouchEvent)
     {
         var touch = _touchesMap.get(e.touchPointID);
 
         if(touch != null)
-            touch.release(e.stageX, e.stageY, _camera);
+            touch.release(e.stageX, e.stageY);
     }
 
-    function onTouchMove(e: TouchEvent)
+    public function onTouchMove(e: TouchEvent)
     {
         var touch = _touchesMap.get(e.touchPointID);
 
         if(touch != null)
-            touch.move(e.stageX, e.stageY, _camera);
-    }
-
-    function addListeners()
-    {
-        if(_camera != null)
-        {
-            // _camera.addEventListener(TouchEvent.TOUCH_BEGIN, onTouchBegin);
-            // _camera.addEventListener(TouchEvent.TOUCH_END, onTouchEnd);
-        }
-    }
-
-    function removeListeners()
-    {
-        if(_camera != null)
-        {
-            // _camera.removeEventListener(TouchEvent.TOUCH_BEGIN, onTouchBegin);
-            // _camera.removeEventListener(TouchEvent.TOUCH_END, onTouchEnd);
-        }
-    }
-
-    public function destroy()
-    {
-        Lib.current.stage.removeEventListener(TouchEvent.TOUCH_MOVE, onTouchMove);
-        Lib.current.stage.removeEventListener(TouchEvent.TOUCH_BEGIN, onTouchBegin);
-        Lib.current.stage.removeEventListener(TouchEvent.TOUCH_END, onTouchEnd);
-
-        removeListeners();
+            touch.move(e.stageX, e.stageY);
     }
 }

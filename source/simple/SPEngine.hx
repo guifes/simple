@@ -5,6 +5,8 @@ import openfl.Lib;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
+import openfl.events.MouseEvent;
+import openfl.events.TouchEvent;
 import simple.debug.SPPerformanceWidget;
 import simple.display.SPBitmapCache;
 import simple.display.SPState;
@@ -16,7 +18,6 @@ import simple.input.SPTouchManager;
 
 class SPEngine
 {
-    // public static var bitmapCache(default, null): SPBitmapCache;
 	public static var gameWidth(default, null): Int;
 	public static var gameHeight(default, null): Int;
     public static var gameZoom(default, null): Float;
@@ -32,20 +33,19 @@ class SPEngine
 	static var _currentState: SPState;
 
     @:access(simple.display.SPState)
-	public static function start(appContainer: Sprite, gameWidth: Int, initialState: Void -> SPState, debug: Bool = true)
+	public static function start(appContainer: Sprite, gameWidth_: Int, initialState: Void -> SPState, debug: Bool = true)
 	{
-        SPEngine.root = appContainer;
-        // SPEngine.bitmapCache = new SPBitmapCache();
-        SPEngine.shaderHub = new SPShaderHub();
+        root = appContainer;
+        shaderHub = new SPShaderHub();
 #if mobile
-        SPEngine.touchManager = new SPTouchManager();
+        touchManager = new SPTouchManager();
 #end
-        SPEngine.mouse = new SPMouse();
+        mouse = new SPMouse();
 
-        SPEngine.gameWidth = gameWidth;
-        SPEngine.gameHeight = getGameHeight(gameWidth);
+		gameWidth = gameWidth_;
+        gameHeight = getGameHeight(gameWidth);
 
-        SPEngine.gameZoom = Lib.current.stage.stageWidth / gameWidth;
+        gameZoom = Lib.current.stage.stageWidth / gameWidth;
 
 		// Initialize game
         {
@@ -58,8 +58,20 @@ class SPEngine
             _gameContainer.scaleX = SPEngine.gameZoom;
             _gameContainer.scaleY = SPEngine.gameZoom;
 
-            appContainer.addChild(_gameContainer);
-            appContainer.addChild(_uiContainer);
+			root.addChild(_gameContainer);
+			root.addChild(_uiContainer);
+
+#if mobile
+			_gameContainer.addEventListener(TouchEvent.TOUCH_MOVE, touchManager.onTouchMove);
+			_gameContainer.addEventListener(TouchEvent.TOUCH_BEGIN, touchManager.onTouchBegin);
+			_gameContainer.addEventListener(TouchEvent.TOUCH_END, touchManager.onTouchEnd);
+#else
+			_gameContainer.addEventListener(MouseEvent.MOUSE_MOVE, mouse.onMouseMove);
+			_gameContainer.addEventListener(MouseEvent.MOUSE_WHEEL, mouse.onMouseWheel);
+			_gameContainer.addEventListener(MouseEvent.MOUSE_UP, mouse.onMouseUp);
+			_gameContainer.addEventListener(MouseEvent.MOUSE_DOWN, mouse.onMouseDown);
+			_gameContainer.addEventListener(MouseEvent.MOUSE_OUT, mouse.onMouseUp);
+#end
         }
         
 #if debug
@@ -68,7 +80,7 @@ class SPEngine
         {
             var fps = new SPPerformanceWidget(10, 10, 0x00ffff);
 
-            appContainer.addChild(fps);
+			root.addChild(fps);
         }
 #end
         
@@ -129,13 +141,13 @@ class SPEngine
         // Changing state
         _currentState = state;
 
-         SPEngine.mouse.resetClicks();
+         mouse.resetClicks();
 
 #if mobile
-        SPEngine.touchManager.setCamera(_currentState.camera);
+        touchManager.setCamera(_currentState.camera);
+#else
+        mouse.setCamera(_currentState.camera);
 #end
-        SPEngine.mouse.setCamera(_currentState.camera);
-
         _gameContainer.addChild(_currentState.gameContainer);
         _uiContainer.addChild(_currentState.uiContainer);
 

@@ -1,7 +1,7 @@
 package simple.input;
 
-import simple.display.SPCamera;
 import openfl.geom.Point;
+import simple.display.SPCamera;
 
 class SPTouch implements ISPDestroyable
 {
@@ -19,6 +19,11 @@ class SPTouch implements ISPDestroyable
     public function new(id: Int)
     {
         reset(id);
+    }
+
+    public function setCamera(camera: SPCamera)
+    {
+        _pointer.setCamera(camera);
     }
 
     public function reset(id: Int)
@@ -74,20 +79,20 @@ class SPTouch implements ISPDestroyable
         return !(_button.released && !just_released);
     }
 
-    public function press(x: Float, y: Float, camera: SPCamera)
+    public function press(x: Float, y: Float)
     {
         _button.press();
-        _pointer.move(x, y, camera);
+        _pointer.move(x, y);
     }
 
-    public function release(x: Float, y: Float, camera: SPCamera)
+    public function release(x: Float, y: Float)
     {
         _button.release();
-        _pointer.move(x, y, camera);
+        _pointer.move(x, y);
     }
 
-    public function move(x: Float, y: Float, camera: SPCamera)
+    public function move(x: Float, y: Float)
     {
-        _pointer.move(x, y, camera);
+        _pointer.move(x, y);
     }
 }
