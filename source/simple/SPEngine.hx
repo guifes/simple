@@ -11,7 +11,7 @@ import simple.debug.SPPerformanceWidget;
 import simple.display.SPBitmapCache;
 import simple.display.SPState;
 import simple.display.shader.SPShaderHub;
-import simple.input.SPMouse;
+import simple.input.SPMouseManager;
 #if mobile
 import simple.input.SPTouchManager;
 #end
@@ -26,7 +26,7 @@ class SPEngine
 #if mobile
     public static var touchManager(default, null): SPTouchManager;
 #end
-    public static var mouse(default, null): SPMouse;
+	public static var mouseManager(default, null): SPMouseManager;
 
 	static var _uiContainer: Sprite;
     static var _gameContainer: Sprite;
@@ -40,7 +40,7 @@ class SPEngine
 #if mobile
         touchManager = new SPTouchManager();
 #end
-        mouse = new SPMouse();
+        mouseManager = new SPMouseManager();
 
 		gameWidth = gameWidth_;
         gameHeight = getGameHeight(gameWidth);
@@ -65,17 +65,21 @@ class SPEngine
         // Handling input events
         {
 #if mobile
-			_uiContainer.addEventListener(TouchEvent.TOUCH_MOVE, touchManager.onTouchMove);
-			_gameContainer.addEventListener(TouchEvent.TOUCH_MOVE, touchManager.onTouchMove);
-			_gameContainer.addEventListener(TouchEvent.TOUCH_BEGIN, touchManager.onTouchBegin);
-			_gameContainer.addEventListener(TouchEvent.TOUCH_END, touchManager.onTouchEnd);
-#else
-            _uiContainer.addEventListener(MouseEvent.MOUSE_MOVE, mouse.onMouseMove);
-			_gameContainer.addEventListener(MouseEvent.MOUSE_MOVE, mouse.onMouseMove);
-			_gameContainer.addEventListener(MouseEvent.MOUSE_WHEEL, mouse.onMouseWheel);
-			_gameContainer.addEventListener(MouseEvent.MOUSE_UP, mouse.onMouseUp);
-			_gameContainer.addEventListener(MouseEvent.MOUSE_DOWN, mouse.onMouseDown);
+			Lib.current.stage.addEventListener(TouchEvent.TOUCH_MOVE, touchManager.onTouchMove);
+			Lib.current.stage.addEventListener(TouchEvent.TOUCH_BEGIN, touchManager.onTouchBegin);
+			Lib.current.stage.addEventListener(TouchEvent.TOUCH_END, touchManager.onTouchEnd);
 #end
+			_gameContainer.addEventListener(MouseEvent.MOUSE_MOVE, mouseManager.worldMouse.onMouseMove);
+			_gameContainer.addEventListener(MouseEvent.MOUSE_WHEEL, mouseManager.worldMouse.onMouseWheel);
+			_gameContainer.addEventListener(MouseEvent.MOUSE_UP, mouseManager.worldMouse.onMouseUp);
+			_gameContainer.addEventListener(MouseEvent.MOUSE_DOWN, mouseManager.worldMouse.onMouseDown);
+			_gameContainer.addEventListener(MouseEvent.RELEASE_OUTSIDE, mouseManager.worldMouse.onMouseUp);
+
+			Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseManager.screenMouse.onMouseMove);
+			Lib.current.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseManager.screenMouse.onMouseWheel);
+			Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, mouseManager.screenMouse.onMouseUp);
+			Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseManager.screenMouse.onMouseDown);
+			Lib.current.stage.addEventListener(MouseEvent.RELEASE_OUTSIDE, mouseManager.screenMouse.onMouseUp);
         }
         
 #if debug
@@ -105,7 +109,7 @@ class SPEngine
 #if mobile
             touchManager.update(elapsed);
 #end
-            mouse.update(elapsed);
+            mouseManager.update(elapsed);
 
             for(shader in shaderHub.shaders)
                 shader.update(elapsed);
@@ -144,14 +148,14 @@ class SPEngine
 
         // Changing state
         _currentState = state;
-
-         mouse.resetClicks();
-
+        
+		mouseManager.resetClicks();
+        
 #if mobile
         touchManager.setCamera(_currentState.camera);
-#else
-        mouse.setCamera(_currentState.camera);
 #end
+        mouseManager.setCamera(_currentState.camera);
+
         _gameContainer.addChild(_currentState.gameContainer);
         _uiContainer.addChild(_currentState.uiContainer);
 

@@ -15,38 +15,40 @@ class SPPerformanceWidget extends TextField
 	{
 		super();
 
-		x = inX;
-		y = inY;
+		this.mouseEnabled = false;
 
-		selectable = false;
+		this.x = inX;
+		this.y = inY;
 
-		defaultTextFormat = new TextFormat("_sans", 12, inColor);
+		this.selectable = false;
 
-		text = "FPS: ";
+		this.defaultTextFormat = new TextFormat("_sans", 12, inColor);
 
-		times = [];
+		this.text = "FPS: ";
 
-		addEventListener(Event.ENTER_FRAME, onEnter);
+		this.times = [];
 
-		width = 150;
-		height = 70;
+		this.addEventListener(Event.ENTER_FRAME, onEnter);
+
+		this.width = 150;
+		this.height = 70;
 	}
 
 	private function onEnter(_)
 	{	
 		var now = Timer.stamp();
 
-		times.push(now);
+		this.times.push(now);
 
 		while(times[0] < now - 1)
-			times.shift();
+			this.times.shift();
 
 		var mem: Float = Math.round(System.totalMemory / 1024 / 1024 * 100) / 100;
 
-		if(mem > memPeak)
+		if (mem > this.memPeak)
             memPeak = mem;
 
 		if(visible)
-			text = "FPS: " + times.length + "\nMEM: " + mem + " MB\nMEM peak: " + memPeak + " MB";	
+			this.text = "FPS: " + this.times.length + "\nMEM: " + mem + " MB\nMEM peak: " + this.memPeak + " MB";	
 	}
 }
