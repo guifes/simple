@@ -1,5 +1,6 @@
 package simple;
 
+import guifes.collection.HashSet;
 import openfl.Assets;
 import openfl.Lib;
 import openfl.display.Sprite;
@@ -27,12 +28,13 @@ class SPEngine
     public static var touchManager(default, null): SPTouchManager;
 #end
 	public static var mouseManager(default, null): SPMouseManager;
-
+    
+	static var _updatables: Array<ISPUpdatable>;
 	static var _uiContainer: Sprite;
     static var _gameContainer: Sprite;
 	static var _currentState: SPState;
+    static var _timeStarted: Int;
 
-    @:access(simple.display.SPState)
 	public static function start(appContainer: Sprite, gameWidth_: Int, initialState: Void -> SPState, debug: Bool = true)
 	{
         root = appContainer;
@@ -41,6 +43,8 @@ class SPEngine
         touchManager = new SPTouchManager();
 #end
         mouseManager = new SPMouseManager();
+
+		_updatables = new Array<ISPUpdatable>();
 
 		gameWidth = gameWidth_;
         gameHeight = getGameHeight(gameWidth);
@@ -98,27 +102,33 @@ class SPEngine
 
 		// Main loop
 
-		var timeStarted = 0;
+		_timeStarted = 0;
 
-		Lib.current.stage.addEventListener(Event.ENTER_FRAME, (e: Event) ->
-		{
-			var elapsed = Lib.getTimer();
-			var deltaTime = elapsed - timeStarted;
-			timeStarted = elapsed;
-
-#if mobile
-            touchManager.update(elapsed);
-#end
-            mouseManager.update(elapsed);
-
-            for(shader in shaderHub.shaders)
-                shader.update(elapsed);
-
-            Lib.current.stage.invalidate();
-
-			_currentState.__internalUpdate(elapsed, deltaTime);
-		});
+		Lib.current.stage.addEventListener(Event.ENTER_FRAME, mainUpdate);
 	}
+
+	@:access(simple.display.SPState)
+	static function mainUpdate(e:Event)
+    {
+		var elapsed = Lib.getTimer();
+		var deltaTime = elapsed - _timeStarted;
+		_timeStarted = elapsed;
+
+		#if mobile
+		touchManager.update(elapsed);
+		#end
+		mouseManager.update(elapsed);
+
+		for (shader in shaderHub.shaders)
+			shader.update(elapsed);
+
+		Lib.current.stage.invalidate();
+
+		_currentState.__internalUpdate(elapsed, deltaTime);
+
+        for (updatable in _updatables)
+            updatable.update(elapsed);
+    }
 
 	static function getGameHeight(gameWidth: Int): Int
 	{
@@ -130,17 +140,15 @@ class SPEngine
 		return gameHeight;
 	}
 
+    //////////////////////
+    // Public Interface //
+    //////////////////////
+
     public static function switchState(state: SPState)
     {
-        for(i in 0..._gameContainer.numChildren)
-        {
-            var child = _gameContainer.getChildAt(i);
+        state.destroy();
 
-            if(Std.is(child, ISPDestroyable))
-            {
-                cast(child, ISPDestroyable).destroy();
-            }
-        }
+		_updatables = [];
         
         // Clear previous state
         _gameContainer.removeChildren();
@@ -162,4 +170,14 @@ class SPEngine
         // Initialize new state
         _currentState.init();
     }
+
+    public static function subscribeUpdatable(updatable: ISPUpdatable)
+    {
+        _updatables.push(updatable);
+    }
+
+	public static function unsubscribeUpdatable(updatable:ISPUpdatable)
+    {
+		_updatables.remove(updatable);
+	}
 }

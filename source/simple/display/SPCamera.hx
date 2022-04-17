@@ -1,10 +1,12 @@
 package simple.display;
 
-import openfl.display.DisplayObject;
 import de.polygonal.core.math.Mathematics;
+import openfl.display.DisplayObject;
+import openfl.display.Sprite;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
-import openfl.display.Sprite;
+
+using simple.extension.SpriteExtension;
 
 class SPCamera extends Sprite implements ISPDestroyable
 {
@@ -203,6 +205,6 @@ class SPCamera extends Sprite implements ISPDestroyable
 
     public function destroy()
     {
-
+        this.destroyChildren();
     }
 }

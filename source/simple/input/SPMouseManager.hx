@@ -32,5 +32,6 @@ class SPMouseManager
     public function resetClicks()
     {
         worldMouse.resetClicks();
+        screenMouse.resetClicks();
     }
 }

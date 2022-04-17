@@ -2,6 +2,8 @@ package simple.display;
 
 import openfl.display.Sprite;
 
+using simple.extension.SpriteExtension;
+
 class SPOverlay extends Sprite implements ISPDestroyable
 {
 	var _state: SPState;
@@ -28,13 +30,19 @@ class SPOverlay extends Sprite implements ISPDestroyable
 		
 	}
 
+	public function update(elapsed:Int, deltaTime:Int)
+	{
+		
+	}
+
+	@:access(simple.display.SPState)
 	function close()
 	{
-		_state.remove(this);
+		_state.closeOverlay(this);
 	}
 
 	public function destroy()
 	{
-		
+		this.destroyChildren();
 	}
 }

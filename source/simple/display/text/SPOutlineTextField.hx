@@ -28,6 +28,25 @@ class SPOutlineTextField extends Sprite
 	public var borderColor(get, set):Int;
 	public var selectable(get, set):Bool;
 	
+	private override function get_width():Float
+	{
+		return _textfield.width;
+	}
+
+	private override function set_width(value: Float):Float
+	{
+		return _textfield.width = value;
+	}
+
+	private override function get_height():Float
+	{
+		return _textfield.height;
+	}
+
+	private override function set_height(value:Float):Float
+	{
+		return _textfield.height = value;
+	}
 
     private function get_textColor():Int
     {
@@ -213,6 +232,19 @@ class SPOutlineTextField extends Sprite
 
         _textfield.setTextFormat(format, beginIndex, endIndex);
     }
+
+	public function appendText(value: String)
+	{
+		if (outline)
+		{
+			_tu.appendText(value);
+			_td.appendText(value);
+			_tl.appendText(value);
+			_tr.appendText(value);
+		}
+
+		_textfield.appendText(value);
+	}
 
     // SPTextField
 

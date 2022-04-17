@@ -1,4 +1,4 @@
-package simple.addons;
+package simple.extension;
 
 import haxe.Exception;
 import json2object.JsonParser;

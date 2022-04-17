@@ -3,16 +3,19 @@ package simple.display;
 import openfl.display.DisplayObject;
 import openfl.display.Sprite;
 
+using simple.extension.SpriteExtension;
+
 class SPState implements ISPDestroyable
 {
 	public var gameContainer(default, null): Sprite;
 	public var uiContainer(default, null): Sprite;
 	public var camera(default, null): SPCamera;
 
-	// var pause: Bool;
+	private var _overlays: Array<SPOverlay>;
 
 	public function new()
 	{
+		_overlays = [];
 		camera = new SPCamera();
 
 		gameContainer = new Sprite();
@@ -30,8 +33,10 @@ class SPState implements ISPDestroyable
 	{
 		camera.update(elapsed, deltaTime);
 
-		// if(!pause)
-			update(elapsed, deltaTime);
+		update(elapsed, deltaTime);
+
+		for (overlay in _overlays)
+			overlay.update(elapsed, deltaTime);
 	}
 
 	public function update(elapsed: Int, deltaTime: Int)
@@ -63,11 +68,24 @@ class SPState implements ISPDestroyable
 	public function showOverlay(overlay: SPOverlay)
 	{
 		uiContainer.addChild(overlay);
+		_overlays.push(overlay);
+		
 		overlay.__internalStart(this);
+
+		SPEngine.mouseManager.resetClicks();
+	}
+	
+	private function closeOverlay(overlay: SPOverlay)
+	{
+		uiContainer.removeChild(overlay);
+		_overlays.remove(overlay);
+
+		overlay.destroy();
 	}
 
 	public function destroy()
 	{
 		camera.destroy();
+		uiContainer.destroyChildren();
 	}
 }
