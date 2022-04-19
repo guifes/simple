@@ -35,6 +35,14 @@ class SPOutlineTextField extends Sprite
 
 	private override function set_width(value: Float):Float
 	{
+		if (outline)
+		{
+			_tu.width = value;
+			_td.width = value;
+			_tl.width = value;
+			_tr.width = value;
+		}
+
 		return _textfield.width = value;
 	}
 
@@ -45,6 +53,14 @@ class SPOutlineTextField extends Sprite
 
 	private override function set_height(value:Float):Float
 	{
+		if (outline)
+		{
+			_tu.height = value;
+			_td.height = value;
+			_tl.height = value;
+			_tr.height = value;
+		}
+		
 		return _textfield.height = value;
 	}
 
@@ -264,16 +280,18 @@ class SPOutlineTextField extends Sprite
 	{
 		if(value)
 		{
-			this._tu = new TextField();
-			this._td = new TextField();
-			this._tl = new TextField();
-			this._tr = new TextField();
+			this._tu = this._tu == null ? new TextField() : this._tu;
+			this._td = this._td == null ? new TextField() : this._td;
+			this._tl = this._tl == null ? new TextField() : this._tl;
+			this._tr = this._tr == null ? new TextField() : this._tr;
 
 			this._tu.y = -1;
 			this._td.y = 1;
 			this._tl.x = -1;
 			this._tr.x = 1;
 
+			this._tu.width = this._textfield.width;
+			this._tu.height = this._textfield.height;
 			this._tu.multiline = this._textfield.multiline;
 			this._tu.wordWrap = this._textfield.wordWrap;
 			this._tu.defaultTextFormat = this._textfield.defaultTextFormat;
@@ -282,6 +300,8 @@ class SPOutlineTextField extends Sprite
 			this._tu.htmlText = formatOutlineHtmlText(this._textfield.htmlText);
 			this._tu.selectable = false;
 			
+			this._td.width = this._textfield.width;
+			this._td.height = this._textfield.height;
 			this._td.multiline = this._textfield.multiline;
 			this._td.wordWrap = this._textfield.wordWrap;
 			this._td.defaultTextFormat = this._textfield.defaultTextFormat;
@@ -290,6 +310,8 @@ class SPOutlineTextField extends Sprite
 			this._td.htmlText = formatOutlineHtmlText(this._textfield.htmlText);
 			this._td.selectable = false;
 			
+			this._tl.width = this._textfield.width;
+			this._tl.height = this._textfield.height;
 			this._tl.multiline = this._textfield.multiline;
 			this._tl.wordWrap = this._textfield.wordWrap;
 			this._tl.defaultTextFormat = this._textfield.defaultTextFormat;
@@ -298,6 +320,8 @@ class SPOutlineTextField extends Sprite
 			this._tl.htmlText = formatOutlineHtmlText(this._textfield.htmlText);
 			this._tl.selectable = false;
 			
+			this._tr.width = this._textfield.width;
+			this._tr.height = this._textfield.height;
 			this._tr.multiline = this._textfield.multiline;
 			this._tr.wordWrap = this._textfield.wordWrap;
 			this._tr.defaultTextFormat = this._textfield.defaultTextFormat;
@@ -320,11 +344,6 @@ class SPOutlineTextField extends Sprite
 			removeChild(this._td);
 			removeChild(this._tl);
 			removeChild(this._tr);
-			
-			this._tu = null;
-			this._td = null;
-			this._tl = null;
-			this._tr = null;
 		}
 		
 		return outline = value;

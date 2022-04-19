@@ -29,11 +29,11 @@ class SPEngine
 #end
 	public static var mouseManager(default, null): SPMouseManager;
     
-	static var _updatables: Array<ISPUpdatable>;
 	static var _uiContainer: Sprite;
     static var _gameContainer: Sprite;
 	static var _currentState: SPState;
     static var _timeStarted: Int;
+	static var _nextState: SPState;
 
 	public static function start(appContainer: Sprite, gameWidth_: Int, initialState: Void -> SPState, debug: Bool = true)
 	{
@@ -43,8 +43,6 @@ class SPEngine
         touchManager = new SPTouchManager();
 #end
         mouseManager = new SPMouseManager();
-
-		_updatables = new Array<ISPUpdatable>();
 
 		gameWidth = gameWidth_;
         gameHeight = getGameHeight(gameWidth);
@@ -98,7 +96,7 @@ class SPEngine
         
 		// Intitial state
 
-		switchState(initialState());
+		__internalSwitchState(initialState());
 
 		// Main loop
 
@@ -126,8 +124,11 @@ class SPEngine
 
 		_currentState.__internalUpdate(elapsed, deltaTime);
 
-        for (updatable in _updatables)
-            updatable.update(elapsed);
+		if (_nextState != null)
+		{
+			__internalSwitchState(_nextState);
+			_nextState = null;
+		}
     }
 
 	static function getGameHeight(gameWidth: Int): Int
@@ -140,44 +141,38 @@ class SPEngine
 		return gameHeight;
 	}
 
+	static function __internalSwitchState(state: SPState)
+	{
+		if (_currentState != null)
+			_currentState.destroy();
+
+		// Clear previous state
+		_gameContainer.removeChildren();
+		_uiContainer.removeChildren();
+
+		// Changing state
+		_currentState = state;
+
+		mouseManager.resetClicks();
+
+		#if mobile
+		touchManager.setCamera(_currentState.camera);
+		#end
+		mouseManager.setCamera(_currentState.camera);
+
+		_gameContainer.addChild(_currentState.gameContainer);
+		_uiContainer.addChild(_currentState.uiContainer);
+
+		// Initialize new state
+		_currentState.init();
+	}
+
     //////////////////////
     // Public Interface //
     //////////////////////
 
     public static function switchState(state: SPState)
     {
-        state.destroy();
-
-		_updatables = [];
-        
-        // Clear previous state
-        _gameContainer.removeChildren();
-        _uiContainer.removeChildren();
-
-        // Changing state
-        _currentState = state;
-        
-		mouseManager.resetClicks();
-        
-#if mobile
-        touchManager.setCamera(_currentState.camera);
-#end
-        mouseManager.setCamera(_currentState.camera);
-
-        _gameContainer.addChild(_currentState.gameContainer);
-        _uiContainer.addChild(_currentState.uiContainer);
-
-        // Initialize new state
-        _currentState.init();
+		_nextState = state;
     }
-
-    public static function subscribeUpdatable(updatable: ISPUpdatable)
-    {
-        _updatables.push(updatable);
-    }
-
-	public static function unsubscribeUpdatable(updatable:ISPUpdatable)
-    {
-		_updatables.remove(updatable);
-	}
 }

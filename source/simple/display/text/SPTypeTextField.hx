@@ -9,7 +9,7 @@ import openfl.text.TextFieldAutoSize;
 import openfl.text.TextFormat;
 import simple.display.shader.SPTextFieldShader;
 
-class SPTypeTextField extends SPOutlineTextField implements ISPUpdatable implements ISPDestroyable
+class SPTypeTextField extends SPOutlineTextField implements ISPUpdatable
 {
     public var delay: Int;
 
@@ -17,13 +17,6 @@ class SPTypeTextField extends SPOutlineTextField implements ISPUpdatable impleme
     private var _startTime: Int;
     private var _typing: Bool;
     private var _currentCharIndex: Int;
-
-    public override function new()
-    {
-        super();
-        
-        SPEngine.subscribeUpdatable(this);
-    }
 
     public override function set_text(value: String): String
     {
@@ -61,7 +54,7 @@ class SPTypeTextField extends SPOutlineTextField implements ISPUpdatable impleme
     // ISUpdatable //
     /////////////////
     
-    public function update(elapsed: Int)
+    public function update(elapsed: Int, deltaTime: Int)
     {
 		if (_typing)
 		{
@@ -88,9 +81,4 @@ class SPTypeTextField extends SPOutlineTextField implements ISPUpdatable impleme
             }
         }
     }
-
-	public function destroy()
-	{
-		SPEngine.unsubscribeUpdatable(this);
-	}
 }

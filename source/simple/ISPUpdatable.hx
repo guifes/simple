@@ -4,5 +4,5 @@ import guifes.collection.IHashable;
 
 interface ISPUpdatable
 {
-    function update(elapsed: Int): Void;
+    function update(elapsed: Int, deltaTime: Int): Void;
 }
