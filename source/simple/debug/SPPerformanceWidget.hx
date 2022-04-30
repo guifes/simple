@@ -6,32 +6,32 @@ import openfl.system.System;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 
-class SPPerformanceWidget extends TextField
+class SPPerformanceWidget extends SPDebugWidget
 {
+	private static inline var DEFAULT_WIDTH: Float = 150;
+	private static inline var DEFAULT_HEIGHT: Float = 70;
+
+	private var textField: TextField;
 	private var times: Array<Float>;
 	private var memPeak: Float = 0;
 
-	public function new(inX: Float = 10.0, inY: Float = 10.0, inColor: Int = 0x000000) 
+	public function new(inX: Float = 10.0, inY: Float = 10.0) 
 	{
-		super();
+		super("Performance", inX, inY, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
-		this.mouseEnabled = false;
+		this.textField = new TextField();
+		this.textField.width = DEFAULT_WIDTH;
+		this.textField.height = DEFAULT_HEIGHT;
+		this.textField.mouseEnabled = false;
+		this.textField.selectable = false;
+		this.textField.defaultTextFormat = new TextFormat("_sans", 12, SPColor.WHITE);
+		this.textField.text = "FPS: ";
 
-		this.x = inX;
-		this.y = inY;
-
-		this.selectable = false;
-
-		this.defaultTextFormat = new TextFormat("_sans", 12, inColor);
-
-		this.text = "FPS: ";
-
+		this._contentView.addChild(this.textField);
+		
 		this.times = [];
-
+		
 		this.addEventListener(Event.ENTER_FRAME, onEnter);
-
-		this.width = 150;
-		this.height = 70;
 	}
 
 	private function onEnter(_)
@@ -49,6 +49,6 @@ class SPPerformanceWidget extends TextField
             memPeak = mem;
 
 		if(visible)
-			this.text = "FPS: " + this.times.length + "\nMEM: " + mem + " MB\nMEM peak: " + this.memPeak + " MB";	
+			this.textField.text = "FPS: " + this.times.length + "\nMEM: " + mem + " MB\nMEM peak: " + this.memPeak + " MB";	
 	}
 }

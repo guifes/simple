@@ -20,11 +20,20 @@ class SPState implements ISPDestroyable
 		_updatables = [];
 		
 		camera = new SPCamera();
+		camera.name = '${getName()}.camera';
 
 		gameContainer = new Sprite();
+		gameContainer.name = '${getName()}.gameContainer';
+
 		uiContainer = new Sprite();
+		uiContainer.name = '${getName()}.uiContainer';
 
 		gameContainer.addChild(camera);
+	}
+
+	private function getName()
+	{
+		return "SPState";
 	}
 
 	public function init()

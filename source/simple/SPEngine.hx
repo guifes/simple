@@ -8,6 +8,8 @@ import openfl.events.Event;
 import openfl.events.EventDispatcher;
 import openfl.events.MouseEvent;
 import openfl.events.TouchEvent;
+import simple.debug.SPDebugWidget;
+import simple.debug.SPDisplayListWidget;
 import simple.debug.SPPerformanceWidget;
 import simple.display.SPBitmapCache;
 import simple.display.SPState;
@@ -38,6 +40,8 @@ class SPEngine
 	public static function start(appContainer: Sprite, gameWidth_: Int, initialState: Void -> SPState, debug: Bool = true)
 	{
         root = appContainer;
+		root.name = "root";
+		
         shaderHub = new SPShaderHub();
 #if mobile
         touchManager = new SPTouchManager();
@@ -52,7 +56,10 @@ class SPEngine
 		// Initialize game
         {
             _gameContainer = new Sprite();
+			_gameContainer.name = "gameContainer";
+
             _uiContainer = new Sprite();
+			_uiContainer.name = "uiContainer";
 
             _uiContainer.scaleX = SPEngine.gameZoom;
             _uiContainer.scaleY = SPEngine.gameZoom;
@@ -88,9 +95,11 @@ class SPEngine
 		// Initialize overlay stuff
         if(debug)
         {
-            var fps = new SPPerformanceWidget(10, 10, 0x00ffff);
+            // var fps = new SPPerformanceWidget(10, 10);
+			// var hierarchy = new SPDisplayListWidget(Lib.current.stage.stageWidth - 210, 10);
 
-			root.addChild(fps);
+			// root.addChild(fps);
+			// root.addChild(hierarchy);
         }
 #end
         
