@@ -1,6 +1,9 @@
 package simple.debug;
 
 import haxe.Timer;
+import haxe.ui.components.Label;
+import haxe.ui.containers.VBox;
+import haxe.ui.macros.ComponentMacros;
 import openfl.events.Event;
 import openfl.system.System;
 import openfl.text.TextField;
@@ -8,30 +11,33 @@ import openfl.text.TextFormat;
 
 class SPPerformanceWidget extends SPDebugWidget
 {
-	private static inline var DEFAULT_WIDTH: Float = 150;
-	private static inline var DEFAULT_HEIGHT: Float = 70;
+	private static inline var DEFAULT_WIDTH: Float = 250;
+	private static inline var DEFAULT_HEIGHT: Float = 120;
 
-	private var textField: TextField;
 	private var times: Array<Float>;
 	private var memPeak: Float = 0;
+	private var fpsLabel: Label;
+	private var memLabel: Label;
+	private var memPeakLabel: Label;
 
 	public function new(inX: Float = 10.0, inY: Float = 10.0) 
 	{
-		super("Performance", inX, inY, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		super("Performance");
 
-		this.textField = new TextField();
-		this.textField.width = DEFAULT_WIDTH;
-		this.textField.height = DEFAULT_HEIGHT;
-		this.textField.mouseEnabled = false;
-		this.textField.selectable = false;
-		this.textField.defaultTextFormat = new TextFormat("_sans", 12, SPColor.WHITE);
-		this.textField.text = "FPS: ";
-
-		this._contentView.addChild(this.textField);
+		this.width = DEFAULT_WIDTH;
+		this.height = DEFAULT_HEIGHT;
 		
 		this.times = [];
 		
 		this.addEventListener(Event.ENTER_FRAME, onEnter);
+
+		var root = ComponentMacros.buildComponent("assets/haxeui/xml/simple/debug/performance.xml");
+
+		fpsLabel = root.findComponent("fpsLabel", Label, true, "id");
+		memLabel = root.findComponent("memLabel", Label, true, "id");
+		memPeakLabel = root.findComponent("memPeakLabel", Label, true, "id");
+
+		this.containerBox.addComponent(root);
 	}
 
 	private function onEnter(_)
@@ -49,6 +55,17 @@ class SPPerformanceWidget extends SPDebugWidget
             memPeak = mem;
 
 		if(visible)
-			this.textField.text = "FPS: " + this.times.length + "\nMEM: " + mem + " MB\nMEM peak: " + this.memPeak + " MB";	
+		{
+			this.fpsLabel.text = 'FPS: ${this.times.length}';
+			this.memLabel.text = 'MEM: ${mem} MB';
+			this.memPeakLabel.text = 'MEM peak: ${this.memPeak} MB';
+		}
+	}
+
+	public override function onDestroy()
+	{
+		super.onDestroy();
+		
+		this.removeEventListener(Event.ENTER_FRAME, onEnter);
 	}
 }

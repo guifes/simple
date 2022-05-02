@@ -6,11 +6,11 @@ import openfl.Lib;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
+import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.events.TouchEvent;
+import simple.debug.SPDebugContainer;
 import simple.debug.SPDebugWidget;
-import simple.debug.SPDisplayListWidget;
-import simple.debug.SPPerformanceWidget;
 import simple.display.SPBitmapCache;
 import simple.display.SPState;
 import simple.display.shader.SPShaderHub;
@@ -33,6 +33,7 @@ class SPEngine
     
 	static var _uiContainer: Sprite;
     static var _gameContainer: Sprite;
+	static var _debugContainer: SPDebugContainer;
 	static var _currentState: SPState;
     static var _timeStarted: Int;
 	static var _nextState: SPState;
@@ -61,6 +62,10 @@ class SPEngine
             _uiContainer = new Sprite();
 			_uiContainer.name = "uiContainer";
 
+			_debugContainer = new SPDebugContainer();
+			_debugContainer.name = "debugContainer";
+			_debugContainer.visible = false;
+
             _uiContainer.scaleX = SPEngine.gameZoom;
             _uiContainer.scaleY = SPEngine.gameZoom;
 
@@ -69,6 +74,7 @@ class SPEngine
 
 			root.addChild(_gameContainer);
 			root.addChild(_uiContainer);
+			root.addChild(_debugContainer);
         }
 
         // Handling input events
@@ -95,11 +101,13 @@ class SPEngine
 		// Initialize overlay stuff
         if(debug)
         {
-            // var fps = new SPPerformanceWidget(10, 10);
-			// var hierarchy = new SPDisplayListWidget(Lib.current.stage.stageWidth - 210, 10);
-
-			// root.addChild(fps);
-			// root.addChild(hierarchy);
+			Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP,
+				event ->
+				{
+					if(event.charCode == 96)
+						_debugContainer.visible = !_debugContainer.visible;
+				}
+			);
         }
 #end
         
@@ -140,16 +148,6 @@ class SPEngine
 		}
     }
 
-	static function getGameHeight(gameWidth: Int): Int
-	{
-		var stageWidth: Int = Lib.current.stage.stageWidth;
-		var stageHeight: Int = Lib.current.stage.stageHeight;
-		var ratio: Float = stageHeight / stageWidth;
-		var gameHeight = Math.ceil(gameWidth * ratio);
-
-		return gameHeight;
-	}
-
 	static function __internalSwitchState(state: SPState)
 	{
 		if (_currentState != null)
@@ -184,4 +182,23 @@ class SPEngine
     {
 		_nextState = state;
     }
+
+	public static function addDebugWidget(label: String, widget: Void -> SPDebugWidget)
+	{
+		_debugContainer.addDebugWidget(label, widget);
+	}
+
+	////////////
+	// Static //
+	////////////
+
+	static function getGameHeight(gameWidth: Int): Int
+	{
+		var stageWidth: Int = Lib.current.stage.stageWidth;
+		var stageHeight: Int = Lib.current.stage.stageHeight;
+		var ratio: Float = stageHeight / stageWidth;
+		var gameHeight = Math.ceil(gameWidth * ratio);
+
+		return gameHeight;
+	}
 }

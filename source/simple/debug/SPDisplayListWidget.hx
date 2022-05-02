@@ -1,108 +1,69 @@
 package simple.debug;
 
-import haxe.ui.events.MouseEvent;
+import haxe.ui.containers.TreeView;
+import haxe.ui.containers.TreeViewNode;
+import haxe.ui.macros.ComponentMacros;
 import openfl.Lib;
+import openfl.display.DisplayObject;
 import openfl.display.DisplayObjectContainer;
-import openfl.events.Event;
-import openfl.system.System;
-import openfl.text.TextField;
-import openfl.text.TextFormat;
 
 using guifes.extension.ArrayExtension;
 
 class SPDisplayListWidget extends SPDebugWidget
 {
-	private static inline var DEFAULT_WIDTH:Float = 200;
-	private static inline var DEFAULT_HEIGHT:Float = 400;
+	private static inline var NAME: String = "Display List";
 	
-	private var _textfield: TextField;
-	
-	public function new(inX: Float = 10.0, inY: Float = 10.0) 
+	private var contentView: TreeView;
+
+	public function new() 
 	{
-		super("Display List", inX, inY, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		super(NAME);
 
-		_textfield = new TextField();
-
-		_textfield.selectable = false;
-		_textfield.width = DEFAULT_WIDTH;
-		_textfield.height = DEFAULT_HEIGHT;
-		_textfield.text = "";
-		_textfield.defaultTextFormat = new TextFormat("_sans", 12, SPColor.WHITE);
-		_textfield.mouseEnabled = true;
-		_textfield.mouseWheelEnabled = true;
-
-		_textfield.addEventListener(MouseEvent.MOUSE_WHEEL, e ->
-		{
-			trace(e.delta);
-			_textfield.scrollV += e.delta * 10;
-		});
-
-		_contentView.addChild(_textfield);
+		this.contentView = ComponentMacros.buildComponent("assets/haxeui/xml/simple/debug/display_list.xml");
 		
-		Lib.current.stage.addEventListener(Event.ADDED, onAddedToStage);
-		Lib.current.stage.addEventListener(Event.REMOVED, onRemovedFromStage);
+		this.containerBox.addComponent(this.contentView);
+
+		buildTree(Lib.current.stage);
 	}
 
-	private function buildTreeString(root: DisplayObjectContainer, recursion: Int = 0)
+	private function buildTree(node: DisplayObject, parentTreeNode: TreeViewNode = null)
 	{
-		if (visible && recursion < 10)
+		if(node.name == NAME)
+			return;
+
+		var treeNode: TreeViewNode;
+
+		if(parentTreeNode == null)
+			treeNode = this.contentView.addNode({ text: getNormalizedNodeName(node) });
+		else
+			treeNode = parentTreeNode.addNode({ text: getNormalizedNodeName(node) });
+		
+		if(!Std.isOfType(node, DisplayObjectContainer))
+			return;
+		
+		var containerNode: DisplayObjectContainer = cast node;
+
+		for (i in 0...containerNode.numChildren)
 		{
-			var treeString = new StringBuf();
+			var child = containerNode.getChildAt(i);
+			
+			buildTree(child, treeNode);
+		}
+	}
 
-			for (i in 0...root.numChildren)
-			{
-				var child = root.getChildAt(i);
-				
-				if (i > 0)
-					treeString.add("\n");
+	////////////
+	// Static //
+	////////////
 
-				for(r in 0...recursion)
-					treeString.add(" ");
-
-				if (child.name.substr(0, 8) == "instance")
-				{
-					var typeName = Type.getClassName(Type.getClass(child));
-					var pieces: Array<String> = typeName.split(".");
-					treeString.add(pieces[pieces.length - 1]);
-				}
-				else
-				{
-					treeString.add(child.name);
-				}
-				
-				if(Std.isOfType(child, DisplayObjectContainer))
-				{
-					var containerChild = cast(child, DisplayObjectContainer);
-
-					if (containerChild.numChildren > 0)
-					{
-						treeString.add("\n");
-						treeString.add(buildTreeString(containerChild, recursion + 1));
-					}
-				}
-			}
-
-			return treeString.toString();
+	private static function getNormalizedNodeName(node: DisplayObject)
+	{
+		if (node.name.substr(0, 8) == "instance")
+		{
+			var typeName = Type.getClassName(Type.getClass(node));
+			var pieces: Array<String> = typeName.split(".");
+			return pieces[pieces.length - 1];
 		}
 
-		return "";
-	}
-
-	private function onAddedToStage(event: Event)
-	{
-		var mainSprite: DisplayObjectContainer = cast Lib.current.stage.getChildAt(0);
-		var root: DisplayObjectContainer = cast mainSprite.getChildByName("root");
-
-		var output = buildTreeString(root);
-		_textfield.text = output;
-	}
-
-	private function onRemovedFromStage(event: Event)
-	{
-		var mainSprite: DisplayObjectContainer = cast Lib.current.stage.getChildAt(0);
-		var root: DisplayObjectContainer = cast mainSprite.getChildByName("root");
-
-		var output = buildTreeString(root);
-		_textfield.text = output;
+		return node.name;
 	}
 }
