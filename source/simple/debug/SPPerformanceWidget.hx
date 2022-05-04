@@ -6,13 +6,11 @@ import haxe.ui.containers.VBox;
 import haxe.ui.macros.ComponentMacros;
 import openfl.events.Event;
 import openfl.system.System;
-import openfl.text.TextField;
-import openfl.text.TextFormat;
 
 class SPPerformanceWidget extends SPDebugWidget
 {
-	private static inline var DEFAULT_WIDTH: Float = 250;
-	private static inline var DEFAULT_HEIGHT: Float = 120;
+	private static inline var DEFAULT_WIDTH: Float = 110;
+	private static inline var NAME:String = "Performance";
 
 	private var times: Array<Float>;
 	private var memPeak: Float = 0;
@@ -22,10 +20,9 @@ class SPPerformanceWidget extends SPDebugWidget
 
 	public function new(inX: Float = 10.0, inY: Float = 10.0) 
 	{
-		super("Performance");
+		super(NAME);
 
 		this.width = DEFAULT_WIDTH;
-		this.height = DEFAULT_HEIGHT;
 		
 		this.times = [];
 		

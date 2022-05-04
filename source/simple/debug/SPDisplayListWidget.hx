@@ -11,6 +11,7 @@ using guifes.extension.ArrayExtension;
 
 class SPDisplayListWidget extends SPDebugWidget
 {
+	private static inline var DEFAULT_WIDTH:Float = 200;
 	private static inline var NAME: String = "Display List";
 	
 	private var contentView: TreeView;
@@ -18,6 +19,8 @@ class SPDisplayListWidget extends SPDebugWidget
 	public function new() 
 	{
 		super(NAME);
+
+		this.width = DEFAULT_WIDTH;
 
 		this.contentView = ComponentMacros.buildComponent("assets/haxeui/xml/simple/debug/display_list.xml");
 		

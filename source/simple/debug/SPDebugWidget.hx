@@ -2,6 +2,7 @@ package simple.debug;
 
 import haxe.ui.containers.VBox;
 import haxe.ui.dragdrop.DragManager;
+import haxe.ui.geom.Rectangle;
 
 @:build(haxe.ui.macros.ComponentMacros.build("assets/haxeui/xml/simple/debug/widget_base.xml"))
 class SPDebugWidget extends VBox
@@ -11,6 +12,7 @@ class SPDebugWidget extends VBox
 		super();
 
 		this.nameLabel.text = title;
+		this.includeInLayout = false;
 		this.closeButton.onClick = e -> this.parentComponent.removeComponent(this);
 		this.showToggle.onClick = e -> this.containerBox.visible = !this.containerBox.visible;
 	}
@@ -18,9 +20,17 @@ class SPDebugWidget extends VBox
 	public override function onReady()
 	{
 		super.onReady();
+		
+		var bounds = this.parentComponent.getBounds(this);
 
 		DragManager.instance.registerDraggable(this, {
-			mouseTarget: topBar
+			mouseTarget: topBar,
+			dragBounds: new Rectangle(
+				bounds.left,
+				bounds.top,
+				bounds.width,
+				bounds.height
+			)
 		});
 	}
 }

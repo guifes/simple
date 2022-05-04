@@ -51,27 +51,21 @@ class SPEngine
 
 		gameWidth = gameWidth_;
         gameHeight = getGameHeight(gameWidth);
-
-        gameZoom = Lib.current.stage.stageWidth / gameWidth;
+		gameZoom = getGameZoomForTargetWidth(gameWidth);
 
 		// Initialize game
         {
             _gameContainer = new Sprite();
 			_gameContainer.name = "gameContainer";
+			_gameContainer.scaleX = SPEngine.gameZoom;
+			_gameContainer.scaleY = SPEngine.gameZoom;
 
             _uiContainer = new Sprite();
 			_uiContainer.name = "uiContainer";
 
 			_debugContainer = new SPDebugContainer();
 			_debugContainer.name = "debugContainer";
-			_debugContainer.visible = false;
-
-            _uiContainer.scaleX = SPEngine.gameZoom;
-            _uiContainer.scaleY = SPEngine.gameZoom;
-
-            _gameContainer.scaleX = SPEngine.gameZoom;
-            _gameContainer.scaleY = SPEngine.gameZoom;
-
+            
 			root.addChild(_gameContainer);
 			root.addChild(_uiContainer);
 			root.addChild(_debugContainer);
@@ -105,7 +99,7 @@ class SPEngine
 				event ->
 				{
 					if(event.charCode == 96)
-						_debugContainer.visible = !_debugContainer.visible;
+						_debugContainer.menuBar.visible = !_debugContainer.menuBar.visible;
 				}
 			);
         }
@@ -200,5 +194,10 @@ class SPEngine
 		var gameHeight = Math.ceil(gameWidth * ratio);
 
 		return gameHeight;
+	}
+
+	public static function getGameZoomForTargetWidth(gameWidth: Int): Float
+	{
+		return Lib.current.stage.stageWidth / gameWidth;
 	}
 }
