@@ -28,12 +28,13 @@ class SPPerformanceWidget extends SPDebugWidget
 		
 		this.addEventListener(Event.ENTER_FRAME, onEnter);
 
-		var root = ComponentMacros.buildComponent("assets/haxeui/xml/simple/debug/performance.xml");
+		var root = ComponentMacros.buildComponent("simple/debug/xml/performance.xml");
 
 		fpsLabel = root.findComponent("fpsLabel", Label, true, "id");
 		memLabel = root.findComponent("memLabel", Label, true, "id");
 		memPeakLabel = root.findComponent("memPeakLabel", Label, true, "id");
-
+		
+		// this.containerBox.styleString = 'min-width: ${DEFAULT_WIDTH}px;';
 		this.containerBox.addComponent(root);
 	}
 

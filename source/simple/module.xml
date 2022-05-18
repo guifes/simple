@@ -1,0 +1,6 @@
+<module id="simple">
+    <resources>
+        <resource path="/simple/debug/xml" prefix="simple/debug/xml" />
+        <resource path="/simple/debug/textures" prefix="simple/debug/textures" />
+    </resources>
+</module>

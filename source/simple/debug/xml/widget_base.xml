@@ -1,0 +1,13 @@
+<vbox style="spacing: 0px">
+    <hbox id="topBar">
+        <hbox verticalAlign="center">
+            <image id="iconImage" verticalAlign="center" />
+            <label id="nameLabel" styleName="widgetTopBar" text="Display List" verticalAlign="center" />
+        </hbox>
+        <hbox verticalAlign="center" style="spacing: 2px">
+            <button id="showToggle" icon="simple/debug/textures/minimize.png" verticalAlign="center" width="10" height="10" />
+            <button id="closeButton" icon="simple/debug/textures/close.png" verticalAlign="center" width="10" height="10" />
+        </hbox>
+    </hbox>
+    <box id="containerBox" />
+</vbox>

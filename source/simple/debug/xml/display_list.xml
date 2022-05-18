@@ -1,0 +1,15 @@
+<tree-view styleName="debug_displayList">
+    <item-renderer id="nonexpandable" layoutName="horizontal">
+        <checkbox id="visibleCheckbox" verticalAlign="center" />
+        <image id="icon" verticalAlign="center" />
+        <label id="text" verticalAlign="center" />
+    </item-renderer>
+    <item-renderer id="expandable" layoutName="horizontal">
+        <image resource="haxeui-core/styles/shared/folder-light.png" verticalAlign="center" />
+        <label id="text" verticalAlign="center" />
+        <hbox style="background-color: $solid-background-color-alt;border-radius:3px;padding: 1px 3px;spacing:0;" verticalAlign="center">
+            <label id="count" style="color:#888888;font-size: 11px;" />
+        </hbox>
+        <checkbox id="checked" verticalAlign="center" />
+    </item-renderer>
+</tree-view>

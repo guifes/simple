@@ -6,7 +6,7 @@ import haxe.ui.events.UIEvent;
 import openfl.display.DisplayObject;
 import simple.debug.SPDebugWidget;
 
-@:build(haxe.ui.macros.ComponentMacros.build("assets/haxeui/xml/simple/debug/main_container.xml"))
+@:build(haxe.ui.macros.ComponentMacros.build("simple/debug/xml/main_container.xml"))
 class SPDebugContainer extends Box
 {
 	var _widgetCount: Int;

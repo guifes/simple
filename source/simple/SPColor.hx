@@ -140,7 +140,7 @@ abstract SPColor(Int) from Int from UInt to Int to UInt
 	 * @param	Hue			A number between 0 and 360, indicating position on a color strip or wheel.
 	 * @param	Saturation	A number between 0 and 1, indicating how colorful or gray the color should be.  0 is gray, 1 is vibrant.
 	 * @param	Brightness	(aka Value) A number between 0 and 1, indicating how bright the color should be.  0 is black, 1 is full bright.
-	 * @param	Alpha		How opaque the color should be, either between 0 and 1 or 0 and 255.
+	 * @param	Alpha		How opaque the color should be between 0 and 1.
 	 * @return	The color as a SPColor
 	 */
 	public static function fromHSB(Hue:Float, Saturation:Float, Brightness:Float, Alpha:Float = 1):SPColor

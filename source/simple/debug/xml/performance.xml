@@ -1,0 +1,5 @@
+<vbox>
+    <label id="fpsLabel" styleName="widgetContent" />
+    <label id="memLabel" styleName="widgetContent" />
+    <label id="memPeakLabel" styleName="widgetContent" />
+</vbox>

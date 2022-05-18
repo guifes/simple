@@ -22,7 +22,7 @@ class SPDisplayListWidget extends SPDebugWidget
 
 		this.width = DEFAULT_WIDTH;
 
-		this.contentView = ComponentMacros.buildComponent("assets/haxeui/xml/simple/debug/display_list.xml");
+		this.contentView = ComponentMacros.buildComponent("simple/debug/xml/display_list.xml");
 		
 		this.containerBox.addComponent(this.contentView);
 
@@ -37,14 +37,25 @@ class SPDisplayListWidget extends SPDebugWidget
 		var treeNode: TreeViewNode;
 
 		if(parentTreeNode == null)
-			treeNode = this.contentView.addNode({ text: getNormalizedNodeName(node) });
+			treeNode = this.contentView.addNode({
+				text: getNormalizedNodeName(node),
+			});
 		else
-			treeNode = parentTreeNode.addNode({ text: getNormalizedNodeName(node) });
+			treeNode = parentTreeNode.addNode({
+				text: getNormalizedNodeName(node),
+			});
 		
 		if(!Std.isOfType(node, DisplayObjectContainer))
 			return;
 		
 		var containerNode: DisplayObjectContainer = cast node;
+
+		treeNode.data = 
+		{
+			text: getNormalizedNodeName(node),
+			checked: true,
+			count: containerNode.numChildren
+		};
 
 		for (i in 0...containerNode.numChildren)
 		{

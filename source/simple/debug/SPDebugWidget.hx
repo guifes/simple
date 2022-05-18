@@ -4,7 +4,7 @@ import haxe.ui.containers.VBox;
 import haxe.ui.dragdrop.DragManager;
 import haxe.ui.geom.Rectangle;
 
-@:build(haxe.ui.macros.ComponentMacros.build("assets/haxeui/xml/simple/debug/widget_base.xml"))
+@:build(haxe.ui.macros.ComponentMacros.build("simple/debug/xml/widget_base.xml"))
 class SPDebugWidget extends VBox
 {
 	public function new(title: String)
