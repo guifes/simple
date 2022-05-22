@@ -23,5 +23,6 @@ class SPParticle implements Hashable
     public function new()
 	{
 		key = count++;
+		lifetime_count = 0;
 	}
 }

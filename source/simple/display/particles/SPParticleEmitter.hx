@@ -15,7 +15,7 @@ class SPParticleEmitter extends Sprite
 {
     public var settings: SPParticleEmitterSettings;
 
-    static var particleCounter: Int;
+    static var particleCounter: Int = 0;
 
     var _renderer: ISPParticleRenderer;
     var _particlePool: SPPool<SPParticle>;
@@ -31,7 +31,7 @@ class SPParticleEmitter extends Sprite
         
 		_particlePool = new SPPool<SPParticle>(() -> new SPParticle(), count);
 
-		bitmap = bitmap == null ? new BitmapData(1, 1, false, SPColor.BLACK) : bitmap;
+		bitmap = bitmap == null ? new BitmapData(1, 1, false, SPColor.YELLOW) : bitmap;
 
 		this._renderer = switch (type)
         {
