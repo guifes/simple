@@ -9,14 +9,18 @@ import openfl.events.EventDispatcher;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.events.TouchEvent;
-import simple.debug.SPDebugContainer;
-import simple.debug.SPDebugWidget;
 import simple.display.SPBitmapCache;
 import simple.display.SPState;
 import simple.display.shader.SPShaderHub;
 import simple.input.SPMouseManager;
+import simple.debug.SPDebugWidget;
+
 #if mobile
 import simple.input.SPTouchManager;
+#end
+
+#if debug
+import simple.debug.SPDebugContainer;
 #end
 
 class SPEngine
@@ -26,14 +30,17 @@ class SPEngine
     public static var gameZoom(default, null): Float;
     public static var shaderHub(default, null): SPShaderHub;
     public static var root(default, null): Sprite;
+	public static var mouseManager(default, null): SPMouseManager;
 #if mobile
     public static var touchManager(default, null): SPTouchManager;
 #end
-	public static var mouseManager(default, null): SPMouseManager;
     
 	static var _uiContainer: Sprite;
     static var _gameContainer: Sprite;
+
+#if debug
 	static var _debugContainer: SPDebugContainer;
+#end
 	static var _currentState: SPState;
     static var _timeStarted: Int;
 	static var _nextState: SPState;
@@ -59,17 +66,21 @@ class SPEngine
 			_gameContainer.name = "gameContainer";
 			_gameContainer.scaleX = SPEngine.gameZoom;
 			_gameContainer.scaleY = SPEngine.gameZoom;
-
+			
+			root.addChild(_gameContainer);
+			
             _uiContainer = new Sprite();
 			_uiContainer.name = "uiContainer";
-
+			
+			root.addChild(_uiContainer);
+			
+#if debug
 			_debugContainer = new SPDebugContainer();
 			_debugContainer.name = "debugContainer";
-            
-			root.addChild(_gameContainer);
-			root.addChild(_uiContainer);
+			
 			root.addChild(_debugContainer);
-        }
+#end
+		}
 
         // Handling input events
         {
@@ -123,9 +134,9 @@ class SPEngine
 		var deltaTime = elapsed - _timeStarted;
 		_timeStarted = elapsed;
 
-		#if mobile
+#if mobile
 		touchManager.update(elapsed);
-		#end
+#end
 		mouseManager.update(elapsed);
 
 		for (shader in shaderHub.shaders)
@@ -156,9 +167,9 @@ class SPEngine
 
 		mouseManager.resetClicks();
 
-		#if mobile
+#if mobile
 		touchManager.setCamera(_currentState.camera);
-		#end
+#end
 		mouseManager.setCamera(_currentState.camera);
 
 		_gameContainer.addChild(_currentState.gameContainer);
@@ -179,7 +190,9 @@ class SPEngine
 
 	public static function addDebugWidget(label: String, widget: Void -> SPDebugWidget)
 	{
+#if debug
 		_debugContainer.addDebugWidget(label, widget);
+#end
 	}
 
 	////////////
