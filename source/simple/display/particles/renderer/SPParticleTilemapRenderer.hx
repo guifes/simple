@@ -14,7 +14,7 @@ class SPTile extends Tile implements Hashable
 {
     public var key(default, null): Int;
 
-	private static var count: Int;
+	private static var count: Int = 0;
 
     public function new()
     {

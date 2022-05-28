@@ -6,20 +6,15 @@ import openfl.display.DisplayObject;
 import polygonal.ds.Hashable;
 
 @:generic
-class SPPoolGroup<T: DisplayObject & Constructible<Void -> Void> & Hashable> extends SPSpriteGroup
+class SPPoolGroup<T: DisplayObject & Hashable> extends SPSpriteGroup
 {
     var _pool: SPPool<T>;
 
-    public function new(initialCapacity: Int = 0)
+	public function new(allocator: Void -> T, initialCapacity: Int = 0)
     {
         super();
 
-		_pool = new SPPool(allocate, initialCapacity);
-    }
-
-    function allocate()
-    {
-        return new T();
+		_pool = new SPPool(allocator, initialCapacity);
     }
     
     public function get(): T

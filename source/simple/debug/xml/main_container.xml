@@ -4,6 +4,10 @@
         <menu text="Actions">
             <menuitem id="clearWidgets" text="Clear All Widgets" />
         </menu>
+        <menu text="Profiler">
+            <menuitem id="startProfiler" text="Start" />
+            <menuitem id="stopProfiler" text="Stop"/>
+        </menu>
     </menubar>
     <box id="widgetsContainer" width="100%" height="100%"/>
 </box>

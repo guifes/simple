@@ -6,7 +6,7 @@ class SPParticle implements Hashable
 {
 	public var key(default, null): Int;
 
-	private static var count: Int;
+	private static var count: Int = 0;
 	
 	public var id: Int;
 

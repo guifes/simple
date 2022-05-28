@@ -6,6 +6,11 @@ import haxe.ui.events.UIEvent;
 import openfl.display.DisplayObject;
 import simple.debug.SPDebugWidget;
 
+#if cpp
+import cpp.vm.Profiler;
+#end
+
+
 @:build(haxe.ui.macros.ComponentMacros.build("simple/debug/xml/main_container.xml"))
 class SPDebugContainer extends Box
 {
@@ -19,6 +24,10 @@ class SPDebugContainer extends Box
 		addDebugWidget("Performance", () -> new SPPerformanceWidget());
 
 		this.clearWidgets.onClick = onClearWidgets;
+#if cpp
+		this.startProfiler.onClick = e -> Profiler.start();
+		this.stopProfiler.onClick = e -> Profiler.stop();
+#end
 	}
 
 	private function onClearWidgets(e: UIEvent)

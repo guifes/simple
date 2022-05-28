@@ -9,17 +9,17 @@ import openfl.events.EventDispatcher;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.events.TouchEvent;
+import simple.debug.SPDebugWidget;
 import simple.display.SPBitmapCache;
 import simple.display.SPState;
 import simple.display.shader.SPShaderHub;
 import simple.input.SPMouseManager;
-import simple.debug.SPDebugWidget;
 
 #if mobile
 import simple.input.SPTouchManager;
 #end
 
-#if debug
+#if SP_DEBUG
 import simple.debug.SPDebugContainer;
 #end
 
@@ -38,14 +38,14 @@ class SPEngine
 	static var _uiContainer: Sprite;
     static var _gameContainer: Sprite;
 
-#if debug
+#if SP_DEBUG
 	static var _debugContainer: SPDebugContainer;
 #end
 	static var _currentState: SPState;
     static var _timeStarted: Int;
 	static var _nextState: SPState;
 
-	public static function start(appContainer: Sprite, gameWidth_: Int, initialState: Void -> SPState, debug: Bool = true)
+	public static function start(appContainer: Sprite, gameWidth_: Int, initialState: Void -> SPState)
 	{
         root = appContainer;
 		root.name = "root";
@@ -74,7 +74,7 @@ class SPEngine
 			
 			root.addChild(_uiContainer);
 			
-#if debug
+#if SP_DEBUG
 			_debugContainer = new SPDebugContainer();
 			_debugContainer.name = "debugContainer";
 			
@@ -102,18 +102,18 @@ class SPEngine
 			Lib.current.stage.addEventListener(MouseEvent.RELEASE_OUTSIDE, mouseManager.screenMouse.onMouseUp);
         }
         
-#if debug
-		// Initialize overlay stuff
-        if(debug)
-        {
-			Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP,
-				event ->
-				{
-					if(event.charCode == 96)
-						_debugContainer.menuBar.visible = !_debugContainer.menuBar.visible;
-				}
-			);
-        }
+#if SP_DEBUG
+		// Initialize Debugger
+		
+		_debugContainer.menuBar.visible = false;
+
+		Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP,
+			event ->
+			{
+				if(event.charCode == 96)
+					_debugContainer.menuBar.visible = !_debugContainer.menuBar.visible;
+			}
+		);
 #end
         
 		// Intitial state
@@ -190,7 +190,7 @@ class SPEngine
 
 	public static function addDebugWidget(label: String, widget: Void -> SPDebugWidget)
 	{
-#if debug
+#if SP_DEBUG
 		_debugContainer.addDebugWidget(label, widget);
 #end
 	}
