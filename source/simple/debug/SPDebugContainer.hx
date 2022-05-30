@@ -21,7 +21,8 @@ class SPDebugContainer extends Box
 		super();
 		
 		addDebugWidget("Display List", () -> new SPDisplayListWidget());
-		addDebugWidget("Performance", () -> new SPPerformanceGraphWidget());
+		addDebugWidget("Performance", () -> new SPPerformanceWidget());
+		addDebugWidget("Performance Graph", () -> new SPPerformanceGraphWidget());
 		
 #if cpp
 		{
