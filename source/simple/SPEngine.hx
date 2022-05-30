@@ -143,16 +143,16 @@ class SPEngine
 			shader.update(elapsed);
 
 		Lib.current.stage.invalidate();
-
+		
 		_currentState.__internalUpdate(elapsed, deltaTime);
-
+		
 		if (_nextState != null)
 		{
 			__internalSwitchState(_nextState);
 			_nextState = null;
 		}
     }
-
+	
 	static function __internalSwitchState(state: SPState)
 	{
 		if (_currentState != null)

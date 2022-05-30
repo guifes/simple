@@ -10,26 +10,48 @@ import simple.debug.SPDebugWidget;
 import cpp.vm.Profiler;
 #end
 
-
 @:build(haxe.ui.macros.ComponentMacros.build("simple/debug/xml/main_container.xml"))
 class SPDebugContainer extends Box
 {
-	var _widgetCount: Int;
-
+	var _profilingMenuItem: MenuItem;
+	var _isProfiling: Bool = false;
+	
 	public function new()
 	{
 		super();
 		
 		addDebugWidget("Display List", () -> new SPDisplayListWidget());
-		addDebugWidget("Performance", () -> new SPPerformanceWidget());
-
-		this.clearWidgets.onClick = onClearWidgets;
+		addDebugWidget("Performance", () -> new SPPerformanceGraphWidget());
+		
 #if cpp
-		this.startProfiler.onClick = e -> Profiler.start();
-		this.stopProfiler.onClick = e -> Profiler.stop();
-#end
-	}
+		{
+			_profilingMenuItem = new MenuItem();
+			_profilingMenuItem.text = "Start Profiling";
+			_profilingMenuItem.onClick = e ->
+			{
+				if (_isProfiling)
+				{
+					_profilingMenuItem.text = "Start Profiling";
 
+					Profiler.stop();
+				}
+				else
+				{
+					_profilingMenuItem.text = "Stop Profiling";
+					
+					Profiler.start('dump.txt');
+				}
+
+				_isProfiling = !_isProfiling;
+			};
+			
+			this.profilerMenu.addComponent(_profilingMenuItem);
+		}
+#end
+		
+		this.clearWidgets.onClick = onClearWidgets;
+	}
+	
 	private function onClearWidgets(e: UIEvent)
 	{
 		this.widgetsContainer.removeAllComponents();
