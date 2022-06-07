@@ -1,15 +1,17 @@
 package simple.display.text;
 
 import openfl.Assets;
+import openfl.Lib;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.geom.Rectangle;
 import openfl.text.TextField;
 import openfl.text.TextFieldAutoSize;
 import openfl.text.TextFormat;
+import simple.SPEvent;
 import simple.display.shader.SPTextFieldShader;
 
-class SPTypeTextField extends SPOutlineTextField implements ISPUpdatable
+class SPTypeTextField extends SPOutlineTextField implements ISPDestroyable
 {
     public var delay: Int;
 
@@ -17,6 +19,13 @@ class SPTypeTextField extends SPOutlineTextField implements ISPUpdatable
     private var _startTime: Int;
     private var _typing: Bool;
     private var _currentCharIndex: Int;
+
+	public function new()
+	{
+		super();
+		
+		SPEngine.addEventListener(SPEvent.UPDATE, update);
+	}
 
     public override function set_text(value: String): String
     {
@@ -54,17 +63,17 @@ class SPTypeTextField extends SPOutlineTextField implements ISPUpdatable
     // ISUpdatable //
     /////////////////
     
-    public function update(elapsed: Int, deltaTime: Int)
+    public function update(e: SPEvent)
     {
 		if (_typing)
 		{
             if(_startTime == 0)
             {
-                _startTime = elapsed;
+                _startTime = e.elapsed;
                 return;
             }
             
-            var delta = elapsed - _startTime;
+            var delta = e.elapsed - _startTime;
             var charIndex = Std.int(delta / delay);
 
 			if (charIndex >= _finalText.length)
@@ -81,4 +90,13 @@ class SPTypeTextField extends SPOutlineTextField implements ISPUpdatable
             }
         }
     }
+
+	////////////////////
+	// ISPDestroyable //
+	////////////////////
+
+	public function destroy()
+	{
+		SPEngine.removeEventListener(SPEvent.UPDATE, update);
+	}
 }

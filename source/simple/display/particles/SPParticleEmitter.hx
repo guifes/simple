@@ -11,9 +11,10 @@ import simple.display.particles.renderer.ISPParticleRenderer;
 import simple.display.particles.renderer.SPParticleRendererType;
 import simple.display.particles.renderer.SPParticleTilemapRenderer;
 
-class SPParticleEmitter extends Sprite
+class SPParticleEmitter extends Sprite implements ISPDestroyable
 {
     public var settings: SPParticleEmitterSettings;
+	public var active: Bool;
 
     static var particleCounter: Int = 0;
 
@@ -37,25 +38,31 @@ class SPParticleEmitter extends Sprite
         {
 			default: new SPParticleTilemapRenderer(width, height, bitmap, count);
 		}
-        
+
+		// this.graphics.beginFill(SPColor.CYAN, 0.25);
+		// this.graphics.drawRect(0, 0, width, height);
+		// this.graphics.endFill();
+
 		var root = this._renderer.getRoot();
         
 		addChild(root);
-    }
 
-    public function update(elapsed: Int, deltaTime: Int)
+		SPEngine.addEventListener(SPEvent.UPDATE, update);
+    }
+	
+    function update(e: SPEvent)
     {
         var wasAtMaxParticles = _atMaxParticles;
 		var _atMaxParticles = _particlePool.getAliveCount() >= this.settings.max_particles;
         
 		// Spawn particle
         
-		if (!_atMaxParticles)
+		if (active && !_atMaxParticles)
 		{
             if (wasAtMaxParticles)
 				_lastEmission = _time;
 			
-			var deltaSinceLastEmission: Int = elapsed - _lastEmission;
+			var deltaSinceLastEmission: Int = e.elapsed - _lastEmission;
 			var toEmit: Int = Std.int(deltaSinceLastEmission * this.settings.emission_rate);
             
             for(_ in 0...toEmit)
@@ -96,7 +103,7 @@ class SPParticleEmitter extends Sprite
 				this._renderer.addParticle(particle.id, particle.pos_x, particle.pos_y);
             }
 
-			_lastEmission = (toEmit > 0) ? elapsed : _lastEmission;
+			_lastEmission = (toEmit > 0) ? e.elapsed : _lastEmission;
         }
     
         // Update particles
@@ -110,7 +117,7 @@ class SPParticleEmitter extends Sprite
             }
             else
             {
-				particle.lifetime_count += deltaTime;
+				particle.lifetime_count += e.deltaTime;
 
                 particle.pos_x += particle.speed_x;
                 particle.pos_y += particle.speed_y;
@@ -121,6 +128,15 @@ class SPParticleEmitter extends Sprite
 
 		this._renderer.update(_particlePool.alive());
 
-		_time = elapsed;
+		_time = e.elapsed;
     }
+
+	////////////////////
+	// ISPDestroyable //
+	////////////////////
+
+	public function destroy()
+	{
+		SPEngine.removeEventListener(SPEvent.UPDATE, update);
+	}
 }

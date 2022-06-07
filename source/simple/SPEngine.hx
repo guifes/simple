@@ -6,9 +6,11 @@ import openfl.Lib;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
+import openfl.events.EventType;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.events.TouchEvent;
+import simple.SPEvent;
 import simple.debug.SPDebugWidget;
 import simple.display.SPBitmapCache;
 import simple.display.SPState;
@@ -44,11 +46,14 @@ class SPEngine
 	static var _currentState: SPState;
     static var _timeStarted: Int;
 	static var _nextState: SPState;
+	static var _eventDispatcher: EventDispatcher;
 
 	public static function start(appContainer: Sprite, gameWidth_: Int, initialState: Void -> SPState)
 	{
         root = appContainer;
 		root.name = "root";
+
+		_eventDispatcher = new EventDispatcher();
 		
         shaderHub = new SPShaderHub();
 #if mobile
@@ -128,7 +133,7 @@ class SPEngine
 	}
 
 	@:access(simple.display.SPState)
-	static function mainUpdate(e:Event)
+	static function mainUpdate(e: Event)
     {
 		var elapsed = Lib.getTimer();
 		var deltaTime = elapsed - _timeStarted;
@@ -145,6 +150,8 @@ class SPEngine
 		Lib.current.stage.invalidate();
 		
 		_currentState.__internalUpdate(elapsed, deltaTime);
+
+		_eventDispatcher.dispatchEvent(new SPEvent(SPEvent.UPDATE, elapsed, deltaTime));
 		
 		if (_nextState != null)
 		{
@@ -193,6 +200,16 @@ class SPEngine
 #if SP_DEBUG
 		_debugContainer.addDebugWidget(label, widget);
 #end
+	}
+
+	public static function addEventListener(type: String, listener: SPEvent -> Void)
+	{
+		_eventDispatcher.addEventListener(type, listener);
+	}
+
+	public static function removeEventListener(type: String, listener: SPEvent -> Void)
+	{
+		_eventDispatcher.removeEventListener(type, listener);
 	}
 
 	////////////

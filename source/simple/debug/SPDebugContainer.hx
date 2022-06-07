@@ -6,7 +6,7 @@ import haxe.ui.events.UIEvent;
 import openfl.display.DisplayObject;
 import simple.debug.SPDebugWidget;
 
-#if cpp
+#if (cpp && profiler)
 import cpp.vm.Profiler;
 #end
 
@@ -24,7 +24,7 @@ class SPDebugContainer extends Box
 		addDebugWidget("Performance", () -> new SPPerformanceWidget());
 		addDebugWidget("Performance Graph", () -> new SPPerformanceGraphWidget());
 		
-#if cpp
+#if (cpp && profiler)
 		{
 			_profilingMenuItem = new MenuItem();
 			_profilingMenuItem.text = "Start Profiling";

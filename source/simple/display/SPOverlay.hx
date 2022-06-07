@@ -7,14 +7,11 @@ using simple.extension.SpriteExtension;
 class SPOverlay extends Sprite implements ISPDestroyable
 {
 	var _state: SPState;
-	var _updatables:Array<ISPUpdatable>;
 	var _shouldClose: Bool;
 
 	public function new(background: Bool = true, alpha: Float = 0.7)
 	{
         super();
-
-		_updatables = [];
 
 		if(background)
 		{
@@ -40,9 +37,6 @@ class SPOverlay extends Sprite implements ISPDestroyable
 	function __internalUpdate(elapsed: Int, deltaTime: Int)
 	{
 		update(elapsed, deltaTime);
-		
-		for (updatable in _updatables)
-			updatable.update(elapsed, deltaTime);
 
 		if (_shouldClose)
 			_state.closeOverlay(this);
@@ -70,8 +64,6 @@ class SPOverlay extends Sprite implements ISPDestroyable
 
 	public function destroy()
 	{
-		_updatables = null;
-		
 		this.destroyChildren();
 	}
 }

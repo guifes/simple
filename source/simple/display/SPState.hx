@@ -12,12 +12,10 @@ class SPState implements ISPDestroyable
 	public var camera(default, null): SPCamera;
 
 	private var _overlays: Array<SPOverlay>;
-	private var _updatables: Array<ISPUpdatable>;
 
 	public function new()
 	{
 		_overlays = [];
-		_updatables = [];
 		
 		camera = new SPCamera();
 		camera.name = '${getName()}.camera';
@@ -50,9 +48,6 @@ class SPState implements ISPDestroyable
 
 		for (overlay in _overlays)
 			overlay.__internalUpdate(elapsed, deltaTime);
-
-		for (updatable in _updatables)
-			updatable.update(elapsed, deltaTime);
 	}
 
 	public function update(elapsed: Int, deltaTime: Int) {} // Not meant to have any code
@@ -98,8 +93,6 @@ class SPState implements ISPDestroyable
 
 	public function destroy()
 	{
-		_updatables = null;
-		
 		camera.destroy();
 		uiContainer.destroyChildren();
 	}
