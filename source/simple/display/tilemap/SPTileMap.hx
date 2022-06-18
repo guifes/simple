@@ -1,11 +1,11 @@
 package simple.display.tilemap;
 
-import openfl.display.Tilemap;
+import openfl.display.BitmapData;
 import openfl.display.Sprite;
 import openfl.display.Tile;
-import openfl.geom.Rectangle;
+import openfl.display.Tilemap;
 import openfl.display.Tileset;
-import openfl.display.BitmapData;
+import openfl.geom.Rectangle;
 
 #if debug
 import openfl.display.Shape;
@@ -17,7 +17,8 @@ class SPTileMap extends Sprite
     var _widthInTiles: Int;
     var _heightInTiles: Int;
     var _data: Array<Int>;
-    var _autoTile: SPAutoTilingPolicy;
+    var _autoTilePolicy: SPAutoTilingPolicy;
+    var _mapping: Array<Int>;
     var _startingIndex: Int;
 
 #if debug
@@ -46,16 +47,17 @@ class SPTileMap extends Sprite
         bitmapData: BitmapData,
         tileWidth: Int = 0,
         tileHeight: Int = 0,
-        ?autoTile: SPAutoTilingPolicy,
         startingIndex: Int = 0,
         drawIndex: Int = 1,
-        collideIndex: Int = 1
+        collideIndex: Int = 1,
+        autoTilePolicy: SPAutoTilingPolicy = OFF,
+        ?mapping: Array<Int>
     )
     {
         _widthInTiles = widthInTiles;
         _heightInTiles = heightInTiles;
         _data = data;
-        _autoTile = autoTile;
+		_autoTilePolicy = autoTilePolicy;
         _startingIndex = startingIndex;
 
         var rects = new Array<Rectangle>();
@@ -82,7 +84,7 @@ class SPTileMap extends Sprite
         {
             var x: Int = (i % widthInTiles) * tileWidth;
             var y: Int = Std.int(i / widthInTiles) * tileHeight;
-            var tile = new Tile(SPAutoTiling.getIdWithAutoTilePolicy(i, _startingIndex, _autoTile, _widthInTiles, _heightInTiles, _data), x, y);
+            var tile = new Tile(SPAutoTiling.getIdWithAutoTilingSettings(i, _startingIndex, _autoTilePolicy, _widthInTiles, _heightInTiles, _data), x, y);
 
             _tilemap.addTile(tile);
         }
@@ -113,7 +115,7 @@ class SPTileMap extends Sprite
 
         var ids = [index];
 
-        if(_autoTile != OFF)
+        if(_autoTilePolicy != OFF)
         {
             ids.push(pointToIndex(x + 1, y));
             ids.push(pointToIndex(x - 1, y));
@@ -121,7 +123,7 @@ class SPTileMap extends Sprite
             ids.push(pointToIndex(x, y - 1));
         }
 
-        if(_autoTile == FULL)
+        if(_autoTilePolicy == FULL)
         {
             ids.push(pointToIndex(x + 1, y + 1));
             ids.push(pointToIndex(x + 1, y - 1));
@@ -132,7 +134,7 @@ class SPTileMap extends Sprite
         for(i in ids)
         {
             var tile = _tilemap.getTileAt(i);
-            tile.id = SPAutoTiling.getIdWithAutoTilePolicy(i, _startingIndex, _autoTile, _widthInTiles, _heightInTiles, _data);
+            tile.id = SPAutoTiling.getIdWithAutoTilingSettings(i, _startingIndex, _autoTilePolicy, _widthInTiles, _heightInTiles, _data);
         }
     }
 

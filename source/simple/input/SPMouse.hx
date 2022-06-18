@@ -57,22 +57,22 @@ class SPMouse
 	// Mouse Events //
 	/////////////////
 
-	public function onMouseUp(e:MouseEvent)
+	public function onMouseUp(e: MouseEvent)
     {
 		left.release();
 	}
 
-	public function onMouseDown(e:MouseEvent)
+	public function onMouseDown(e: MouseEvent)
     {
 		left.press();
 	}
 
-	public function onMouseMove(e:MouseEvent)
+	public function onMouseMove(e: MouseEvent)
     {
 		_pointer.move(e.stageX, e.stageY);
 	}
 
-	public function onMouseWheel(e:MouseEvent)
+	public function onMouseWheel(e: MouseEvent)
     {
 		wheel.rotate(e.delta);
 	}

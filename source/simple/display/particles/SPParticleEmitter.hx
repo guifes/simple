@@ -14,15 +14,15 @@ import simple.display.particles.renderer.SPParticleTilemapRenderer;
 class SPParticleEmitter extends Sprite implements ISPDestroyable
 {
     public var settings: SPParticleEmitterSettings;
-	public var active: Bool;
-
+	
     static var particleCounter: Int = 0;
-
+	
     var _renderer: ISPParticleRenderer;
     var _particlePool: SPPool<SPParticle>;
     var _time: Int;
 	var _lastEmission: Int;
     var _atMaxParticles: Bool;
+	var _active: Bool;
 
 	public function new(count: Int, width: Int, height: Int, bitmap: BitmapData = null, type: SPParticleRenderType = SPParticleRenderType.TILEMAP)
     {
@@ -49,15 +49,28 @@ class SPParticleEmitter extends Sprite implements ISPDestroyable
 
 		SPEngine.addEventListener(SPEvent.UPDATE, update);
     }
+
+	public function start()
+	{
+		_time = 0;
+		_active = true;
+	}
+
+	public function stop()
+	{
+		_active = false;
+	}
 	
     function update(e: SPEvent)
     {
         var wasAtMaxParticles = _atMaxParticles;
 		var _atMaxParticles = _particlePool.getAliveCount() >= this.settings.max_particles;
         
+		var isComplete = this.settings.emission_duration >= 0 ? _time >= this.settings.emission_duration : false;
+		var shouldSpawn = _active && !isComplete && !_atMaxParticles;
+
 		// Spawn particle
-        
-		if (active && !_atMaxParticles)
+		if (shouldSpawn)
 		{
             if (wasAtMaxParticles)
 				_lastEmission = _time;

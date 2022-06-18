@@ -21,20 +21,20 @@ class SPAutoTiling
 		 0, 199, 0, 0,  0, 202, 0, 203, 0, 0, 0, 0,  0, 208, 0, 209
 	];
 
-    public static function getIdWithAutoTilePolicy(i: Int, startingIndex: Int, autoTile: SPAutoTilingPolicy, widthInTiles: Int, heightInTiles: Int, data: Array<Int>)
+    public static function getIdWithAutoTilingSettings(i: Int, startingIndex: Int, autoTile: SPAutoTilingPolicy, widthInTiles: Int, heightInTiles: Int, data: Array<Int>, ?mapping: Array<Int>)
     {
         var val = data[i];
 
         return switch(autoTile)
         {
             case OFF: val - startingIndex;
-            case AUTO: SPAutoTiling.autoTileAuto(i, widthInTiles, heightInTiles, data);
-            case ALT: SPAutoTiling.autoTileAlt(i, widthInTiles, heightInTiles, data);
-            case FULL: SPAutoTiling.autoTileFull(i, widthInTiles, heightInTiles, data);
+			case AUTO: SPAutoTiling.autoTileAuto(i, widthInTiles, heightInTiles, mapping, data);
+			case ALT: SPAutoTiling.autoTileAlt(i, widthInTiles, heightInTiles, mapping, data);
+			case FULL: SPAutoTiling.autoTileFull(i, widthInTiles, heightInTiles, mapping ,data);
         }
     }
 
-    static function autoTileAuto(i: Int, widthInTiles: Int, heightInTiles: Int, data: Array<Int>)
+    static function autoTileAuto(i: Int, widthInTiles: Int, heightInTiles: Int, mapping: Array<Int>, data: Array<Int>)
     {
         var val = data[i];
 
@@ -62,7 +62,7 @@ class SPAutoTiling
         return id - 1;
     }
 
-    static function autoTileAlt(i: Int, widthInTiles: Int, heightInTiles: Int, data: Array<Int>)
+    static function autoTileAlt(i: Int, widthInTiles: Int, heightInTiles: Int, mapping: Array<Int>, data: Array<Int>)
     {
         var val = data[i];
 
@@ -111,7 +111,7 @@ class SPAutoTiling
         return id - 1;
     }
 
-    static function autoTileFull(i: Int, widthInTiles: Int, heightInTiles: Int, data: Array<Int>)
+    static function autoTileFull(i: Int, widthInTiles: Int, heightInTiles: Int, mapping: Array<Int>, data: Array<Int>)
     {
         var val = data[i];
 
@@ -154,6 +154,11 @@ class SPAutoTiling
 
         id -= offsetAutoTile[id] - 1;
 
-        return id - 1;
+		if (mapping != null && mapping.length == 48)
+		    id = mapping[id - 1];
+        else
+            id = id - 1;
+
+        return id;
     }
 }
