@@ -2,6 +2,7 @@ package simple.display.particles;
 
 import guifes.math.MathUtil;
 import openfl.geom.Point;
+import simple.SPEasing;
 
 class SPParticleEmitterSettings
 {
@@ -24,6 +25,15 @@ class SPParticleEmitterSettings
     public var angle_var: Float;
 	public var gravity_x: Float;
 	public var gravity_y: Float;
+	public var wiggle_x: Float;
+	public var wiggle_y: Float;
+	public var wiggle_x_freq: Float;
+	public var wiggle_y_freq: Float;
+
+	// Color
+	public var from_color: SPColor;
+	public var to_color: SPColor;
+	public var color_easing: SPEasing;
 
     public function new(count: Int)
     {
@@ -46,5 +56,14 @@ class SPParticleEmitterSettings
 		angle_var = 15;
 		gravity_x = 0;
 		gravity_y = 0;
+		wiggle_x = 0;
+		wiggle_x_freq = 0;
+		wiggle_y = 0;
+		wiggle_y_freq = 0;
+
+		// Color
+		from_color = SPColor.BLACK;
+		to_color = SPColor.BLACK;
+		color_easing = SPEasing.LINEAR;
     }
 }

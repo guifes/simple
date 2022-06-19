@@ -19,6 +19,9 @@ class SPParticle implements Hashable
 	public var pos_y: Float;
 	public var speed_x: Float;
 	public var speed_y: Float;
+
+	// Color
+	public var color: SPColor;
 	
     public function new()
 	{

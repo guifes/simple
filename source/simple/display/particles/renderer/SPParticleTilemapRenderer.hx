@@ -6,6 +6,7 @@ import openfl.display.Tile;
 import openfl.display.TileContainer;
 import openfl.display.Tilemap;
 import openfl.display.Tileset;
+import openfl.geom.ColorTransform;
 import openfl.geom.Rectangle;
 import polygonal.ds.Hashable;
 import polygonal.ds.Itr;
@@ -48,17 +49,25 @@ class SPParticleTilemapRenderer extends Sprite implements ISPParticleRenderer
 		addChild(_tilemap);
     }
     
-	public function addParticle(id: Int, x: Float, y: Float)
+	public function addParticle(particle: SPParticle)
 	{
         var tile = _tilePool.get();
-		tile.x = x;
-        tile.y = y;
+		tile.x = particle.pos_x;
+		tile.y = particle.pos_y;
+		tile.alpha = particle.color.alphaFloat;
         tile.visible = true;
+		
+        tile.colorTransform = new ColorTransform(
+            1, 1, 1, 1,
+            particle.color.red,
+            particle.color.green,
+            particle.color.blue
+        );
         
         if(_tilePool.getAliveCount() > _tilemap.numTiles)
 			_tilemap.addTile(tile);
 
-        _tileLookup.set(id, tile);
+		_tileLookup.set(particle.id, tile);
     }
 
 	public function removeParticle(id: Int)
@@ -77,6 +86,10 @@ class SPParticleTilemapRenderer extends Sprite implements ISPParticleRenderer
             var tile = _tileLookup.get(particle.id);
             tile.x = particle.pos_x + (this.width * 0.5);
 			tile.y = particle.pos_y + (this.height * 0.5);
+			tile.alpha = particle.color.alphaFloat;
+            tile.colorTransform.redOffset = particle.color.red;
+			tile.colorTransform.greenOffset = particle.color.green;
+			tile.colorTransform.blueOffset = particle.color.blue;
         }
     }
 

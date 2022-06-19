@@ -23,16 +23,18 @@ class SPParticleEmitter extends Sprite implements ISPDestroyable
 	var _lastEmission: Int;
     var _atMaxParticles: Bool;
 	var _active: Bool;
+	var _manualUpdate: Bool = false;
 
-	public function new(count: Int, width: Int, height: Int, bitmap: BitmapData = null, type: SPParticleRenderType = SPParticleRenderType.TILEMAP)
+	public function new(count: Int, width: Int, height: Int, bitmap: BitmapData = null, type: SPParticleRenderType = SPParticleRenderType.TILEMAP, manualUpdate: Bool = false)
     {
         super();
         
 		this.settings = new SPParticleEmitterSettings(count);
         
 		_particlePool = new SPPool<SPParticle>(() -> new SPParticle(), count);
+		_manualUpdate = manualUpdate;
 
-		bitmap = bitmap == null ? new BitmapData(1, 1, false, SPColor.YELLOW) : bitmap;
+		bitmap = bitmap == null ? new BitmapData(1, 1, false, SPColor.TRANSPARENT) : bitmap;
 
 		this._renderer = switch (type)
         {
@@ -47,7 +49,8 @@ class SPParticleEmitter extends Sprite implements ISPDestroyable
         
 		addChild(root);
 
-		SPEngine.addEventListener(SPEvent.UPDATE, update);
+		if (!_manualUpdate)
+			SPEngine.addEventListener(SPEvent.UPDATE, updateEvent);
     }
 
 	public function start()
@@ -60,11 +63,19 @@ class SPParticleEmitter extends Sprite implements ISPDestroyable
 	{
 		_active = false;
 	}
+
+	function updateEvent(e: SPEvent)
+	{
+		update(e.elapsed, e.deltaTime);
+	}
 	
-    function update(e: SPEvent)
+    public function update(elapsed: Int, deltaTime: Int)
     {
         var wasAtMaxParticles = _atMaxParticles;
-		var _atMaxParticles = _particlePool.getAliveCount() >= this.settings.max_particles;
+		var aliveParticles = _particlePool.getAliveCount();
+		var availableToSpawn = this.settings.max_particles - aliveParticles;
+
+		_atMaxParticles = aliveParticles >= this.settings.max_particles;
         
 		var isComplete = this.settings.emission_duration >= 0 ? _time >= this.settings.emission_duration : false;
 		var shouldSpawn = _active && !isComplete && !_atMaxParticles;
@@ -75,8 +86,8 @@ class SPParticleEmitter extends Sprite implements ISPDestroyable
             if (wasAtMaxParticles)
 				_lastEmission = _time;
 			
-			var deltaSinceLastEmission: Int = e.elapsed - _lastEmission;
-			var toEmit: Int = Std.int(deltaSinceLastEmission * this.settings.emission_rate);
+			var deltaSinceLastEmission: Int = elapsed - _lastEmission;
+			var toEmit: Int = MathUtil.imin(Std.int(deltaSinceLastEmission * this.settings.emission_rate), availableToSpawn);
             
             for(_ in 0...toEmit)
             {
@@ -112,11 +123,12 @@ class SPParticleEmitter extends Sprite implements ISPDestroyable
 				particle.pos_y = spawnPoint.y;
 				particle.speed_x = Math.cos(angle) * speed;
 				particle.speed_y = Math.sin(angle) * speed;
+				particle.color = this.settings.from_color;
 				
-				this._renderer.addParticle(particle.id, particle.pos_x, particle.pos_y);
+				this._renderer.addParticle(particle);
             }
 
-			_lastEmission = (toEmit > 0) ? e.elapsed : _lastEmission;
+			_lastEmission = (toEmit > 0) ? elapsed : _lastEmission;
         }
     
         // Update particles
@@ -130,18 +142,23 @@ class SPParticleEmitter extends Sprite implements ISPDestroyable
             }
             else
             {
-				particle.lifetime_count += e.deltaTime;
+				particle.lifetime_count += deltaTime;
 
                 particle.pos_x += particle.speed_x;
                 particle.pos_y += particle.speed_y;
 				particle.speed_x += this.settings.gravity_x;
                 particle.speed_y += this.settings.gravity_y;
+				particle.color = SPColor.interpolate(
+					this.settings.from_color,
+					this.settings.to_color,
+					particle.lifetime_count / particle.lifetime
+				);
             }
         }
 
 		this._renderer.update(_particlePool.alive());
 
-		_time = e.elapsed;
+		_time = elapsed;
     }
 
 	////////////////////
@@ -150,6 +167,7 @@ class SPParticleEmitter extends Sprite implements ISPDestroyable
 
 	public function destroy()
 	{
-		SPEngine.removeEventListener(SPEvent.UPDATE, update);
+		if(!_manualUpdate)
+			SPEngine.removeEventListener(SPEvent.UPDATE, updateEvent);
 	}
 }

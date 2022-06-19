@@ -5,7 +5,7 @@ import polygonal.ds.Itr;
 
 interface ISPParticleRenderer
 {
-    function addParticle(id: Int, x: Float, y: Float): Void;
+    function addParticle(particle: SPParticle): Void;
     function removeParticle(id: Int): Void;
     function update(particles: Itr<SPParticle>): Void;
     function getRoot(): DisplayObject;
