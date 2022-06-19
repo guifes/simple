@@ -1,6 +1,7 @@
 package simple.display.particles;
 
 import guifes.math.MathUtil;
+import json2object.JsonParser;
 import openfl.geom.Point;
 import simple.SPEasing;
 
@@ -66,4 +67,10 @@ class SPParticleEmitterSettings
 		to_color = SPColor.BLACK;
 		color_easing = SPEasing.LINEAR;
     }
+
+	public static function fromJson(json: String)
+	{
+		var parser = new JsonParser<SPParticleEmitterSettings>();
+		return parser.fromJson(json);
+	}
 }
