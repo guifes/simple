@@ -32,8 +32,8 @@ class SPParticleEmitterSettings
 	public var wiggle_y_freq: Float;
 
 	// Color
-	public var from_color: SPColor;
-	public var to_color: SPColor;
+	public var from_color: Int;
+	public var to_color: Int;
 	public var color_easing: SPEasing;
 
     public function new(count: Int)

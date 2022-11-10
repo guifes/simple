@@ -6,6 +6,8 @@ import openfl.display.Tile;
 import openfl.display.Tilemap;
 import openfl.display.Tileset;
 import openfl.geom.Rectangle;
+import openfl.text.TextField;
+import openfl.text.TextFormat;
 
 #if debug
 import openfl.display.Shape;
@@ -138,7 +140,7 @@ class SPTileMap extends Sprite
         }
     }
 
-#if debug
+//#if debug
 
     function updateDebug(tilemap: Tilemap, tileWidth: Int, tileHeight: Int, widthInTiles: Int, heightInTiles: Int)
     {
@@ -160,6 +162,24 @@ class SPTileMap extends Sprite
         }
         
         _debugSprite.graphics.drawRect(0, 0, tilemap.width, tilemap.height);
+
+		// var format = new TextFormat(null, 4);
+
+		// for (index in 0...tilemap.numTiles)
+        // {
+		// 	var tile = _tilemap.getTileAt(index);
+
+        //     var textfield = new TextField();
+		// 	textfield.text = '${Std.int(index % widthInTiles)}, ${Std.int(index / widthInTiles)}';
+        //     textfield.selectable = false;
+        //     textfield.x = tile.x;
+        //     textfield.y = tile.y;
+        //     textfield.textColor = SPColor.RED;
+		// 	textfield.setTextFormat(format);
+        //     textfield.visible = true;
+            
+        //     addChild(textfield);
+        // }
     }
 
     public function set_debug(value: Bool)
@@ -168,5 +188,5 @@ class SPTileMap extends Sprite
         return debug = value;
     }
 
-#end
+//#end
 }

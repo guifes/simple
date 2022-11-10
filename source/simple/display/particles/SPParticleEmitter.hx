@@ -13,6 +13,8 @@ import simple.display.particles.renderer.SPParticleTilemapRenderer;
 
 class SPParticleEmitter extends Sprite implements ISPDestroyable
 {
+	public var rendererWidth(default, null): Int;
+	public var rendererHeight(default, null): Int;
     public var settings: SPParticleEmitterSettings;
 	
     static var particleCounter: Int = 0;
@@ -30,6 +32,8 @@ class SPParticleEmitter extends Sprite implements ISPDestroyable
         super();
         
 		this.settings = new SPParticleEmitterSettings(count);
+		this.rendererWidth = width;
+		this.rendererHeight = height;
         
 		_particlePool = new SPPool<SPParticle>(() -> new SPParticle(), count);
 		_manualUpdate = manualUpdate;
@@ -41,9 +45,8 @@ class SPParticleEmitter extends Sprite implements ISPDestroyable
 			default: new SPParticleTilemapRenderer(width, height, bitmap, count);
 		}
 
-		// this.graphics.beginFill(SPColor.CYAN, 0.25);
-		// this.graphics.drawRect(0, 0, width, height);
-		// this.graphics.endFill();
+		//this.graphics.lineStyle(1, SPColor.PINK, 0.25);
+		//this.graphics.drawRect(0, 0, width, height);
 
 		var root = this._renderer.getRoot();
         
@@ -121,8 +124,8 @@ class SPParticleEmitter extends Sprite implements ISPDestroyable
                 particle.lifetime_count = 0;
 				particle.pos_x = spawnPoint.x;
 				particle.pos_y = spawnPoint.y;
-				particle.speed_x = Math.cos(angle) * speed;
-				particle.speed_y = Math.sin(angle) * speed;
+				particle.speed_x = Math.cos(hxmath.math.MathUtil.degToRad(angle)) * speed;
+				particle.speed_y = Math.sin(hxmath.math.MathUtil.degToRad(angle)) * speed; 
 				particle.color = this.settings.from_color;
 				
 				this._renderer.addParticle(particle);

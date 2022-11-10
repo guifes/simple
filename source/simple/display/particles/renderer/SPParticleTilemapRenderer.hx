@@ -44,8 +44,10 @@ class SPParticleTilemapRenderer extends Sprite implements ISPParticleRenderer
 		_tileLookup = new Map<Int, SPTile>();
 
         for(tile in _tilePool.dead())
-            _tilemap.addTile(tile);
-
+        {
+            tile.visible = false;
+            _tilemap.addTile(tile); 
+        }
 		addChild(_tilemap);
     }
     
