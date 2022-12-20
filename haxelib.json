@@ -15,6 +15,7 @@
 		"polygonal-core": "",
 		"json2object": "",
 		"haxe-utils": "",
-		"hxmath": ""
+		"hxmath": "",
+		"random": ""
 	}
 }

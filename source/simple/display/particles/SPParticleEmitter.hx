@@ -104,20 +104,20 @@ class SPParticleEmitter extends Sprite implements ISPDestroyable
 					);
 					
 					case SPParticleEmitterShape.Rectangle: new Point(
-						this.settings.pos_x + MathUtil.randomInRange(-this.settings.pos_x_var, this.settings.pos_x_var),
-						this.settings.pos_y + MathUtil.randomInRange(-this.settings.pos_y_var, this.settings.pos_y_var)
+						this.settings.pos_x + Random.float(-this.settings.pos_x_var, this.settings.pos_x_var),
+						this.settings.pos_y + Random.float(-this.settings.pos_y_var, this.settings.pos_y_var)
 					);
 					
 					case SPParticleEmitterShape.Ellipse: new Point(
-						this.settings.pos_x + Math.sqrt(MathUtil.randomInRange(0, this.settings.pos_x_var)) * Math.cos(MathUtil.randomInRange(0, 2 * Math.PI)),
-						this.settings.pos_y + Math.sqrt(MathUtil.randomInRange(0, this.settings.pos_y_var)) * Math.sin(MathUtil.randomInRange(0, 2 * Math.PI))
+						this.settings.pos_x + Math.sqrt(Random.float(0, this.settings.pos_x_var)) * Math.cos(Random.float(0, 2 * Math.PI)),
+						this.settings.pos_y + Math.sqrt(Random.float(0, this.settings.pos_y_var)) * Math.sin(Random.float(0, 2 * Math.PI))
 					);
                 };
 
                 // Apply variance
-                var angle = this.settings.angle + MathUtil.randomInRange(-this.settings.angle_var, this.settings.angle_var);
-				var speed = this.settings.speed + MathUtil.randomInRange(-this.settings.speed_var, this.settings.speed_var);
-				var lifetime = this.settings.particle_lifetime + Std.int(MathUtil.randomInRange(-this.settings.particle_lifetime_var, this.settings.particle_lifetime_var));
+                var angle = this.settings.angle + Random.float(-this.settings.angle_var, this.settings.angle_var);
+				var speed = this.settings.speed + Random.float(-this.settings.speed_var, this.settings.speed_var);
+				var lifetime = this.settings.particle_lifetime + Std.int(Random.float(-this.settings.particle_lifetime_var, this.settings.particle_lifetime_var));
 
 				particle.id = particleCounter++;
                 particle.lifetime = lifetime;
