@@ -1,6 +1,7 @@
 package simple;
 
 import guifes.collection.HashSet;
+import haxe.Log;
 import openfl.Assets;
 import openfl.Lib;
 import openfl.display.Sprite;
@@ -36,7 +37,11 @@ class SPEngine
 #if mobile
     public static var touchManager(default, null): SPTouchManager;
 #end
-    
+ 
+	inline private static var RED = "\033[0;31m";
+	inline private static var YELLOW = "\033[0;33m";
+	inline private static var NC = "\033[0m"; // No Color
+
 	static var _uiContainer: Sprite;
     static var _gameContainer: Sprite;
 
@@ -210,6 +215,18 @@ class SPEngine
 	public static function removeEventListener(type: String, listener: SPEvent -> Void)
 	{
 		_eventDispatcher.removeEventListener(type, listener);
+	}
+
+	public static function log(s: String, level: SPLogLevel)
+	{
+		s = switch(level)
+		{
+			case SPLogLevel.INFO: s;
+			case SPLogLevel.WARNING: '${YELLOW}${s}${NC}';
+			case SPLogLevel.ERROR: '${RED}${s}${NC}';
+		}
+		
+		Log.trace(s);
 	}
 
 	////////////

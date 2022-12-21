@@ -191,12 +191,15 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 
 	public function setFrameByName(name: String)
 	{
-		if(_frameMap.exists(name))
+		if(!_frameMap.exists(name))
 		{
-			var id = _frameMap.get(name);
-
-			setFrameByIndex(id);
+			SPEngine.log('Sprite doesn\'t have a frame named "$name"', SPLogLevel.WARNING);
+			return;
 		}
+
+		var id = _frameMap.get(name);
+
+		setFrameByIndex(id);
 	}
 
 	public function playAnimation(animationName:String)
