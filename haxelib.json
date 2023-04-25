@@ -9,13 +9,10 @@
 	"contributors": ["guifes"],
 	"classPath": "source",
 	"dependencies": {
-		"tink_core": "",
-		"lime": "",
-		"openfl": "",
-		"polygonal-core": "",
-		"json2object": "",
-		"haxe-utils": "",
-		"hxmath": "",
-		"random": ""
+		"haxe-utils": "git",
+		"json2object": "3.11.0",
+		"hxmath": "0.18.0",
+		"random": "1.4.1",
+		"polygonal-core": "1.0.4"
 	}
 }
