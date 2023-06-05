@@ -1,10 +1,13 @@
 package simple.extension;
 
 import haxe.Exception;
-import json2object.JsonParser;
 import haxe.io.Path;
+import json2object.JsonParser;
 import openfl.Assets;
+import openfl.display.BitmapData;
 import simple.display.SPAnimatedSprite;
+import sys.FileSystem;
+import sys.io.File;
 
 typedef TexturePackerSize =  { w: Int, h: Int }
 
@@ -37,69 +40,53 @@ typedef TexturePackerData =
 	meta: TexturePackerMeta
 }
 
-typedef AnimationData =
+class SPAnimatedSpriteTexturePackagerExtension
 {
-	public var frames: Array<String>;
-	public var looped: Bool;
-	public var flipX: Bool;
-	public var flipY: Bool;
-	public var frameRate: Int;
-}
-
-typedef AnimationsData =
-{
-	animations: Map<String, AnimationData>,
-	texturePackerJson: String
-}
-
-class SPAnimatedSpriteExtension
-{
-	static public function loadAnimationFromFlixelAnimationEditorJson(self: SPAnimatedSprite, animationsJsonPath: String)
-	{
-		if(!Assets.exists(animationsJsonPath))
-			throw new Exception('Asset $animationsJsonPath doesn\'t exist');
-
-		var json = Assets.getText(animationsJsonPath);
-		var parser = new JsonParser<AnimationsData>();
-		var data = parser.fromJson(json);
-
-		var animationsData = new Map<String, SPAnimationNameData>();
-		
-		for(key in data.animations.keys())
-		{
-			var animation = data.animations.get(key);
-			
-			var animationData: SPAnimationNameData = 
-			{
-				frames: animation.frames,
-				repeatCount: animation.looped ? -1 : 0,
-				frameRate: animation.frameRate
-			};
-
-			animationsData.set(key, animationData);
-		}
-
-		self.loadNameAnimations(animationsData);
-	}
-	
-	public static function loadFramesFromTexturePacker(self: SPAnimatedSprite, texturePackerJsonPath: String): Void
+	public static function loadFramesFromTexturePackerJsonAsset(self: SPAnimatedSprite, texturePackerJsonPath: String): Void
 	{
 		if(!Assets.exists(texturePackerJsonPath))
 			throw new Exception('Asset $texturePackerJsonPath doesn\'t exist');
 
 		var json = Assets.getText(texturePackerJsonPath);
+		
 		var parser = new JsonParser<TexturePackerData>();
 		var data = parser.fromJson(json);
-	
+
 		var dir = Path.directory(texturePackerJsonPath);
 
 		var bitmapData = Assets.getBitmapData('${dir}/${data.meta.image}');
 
+		var framesData = loadFramesFromTexturePackerJson(json, data.frames);
+
+		self.loadFrames(bitmapData, framesData);
+	}
+
+	public static function loadFramesFromTexturePackerJsonFile(self: SPAnimatedSprite, texturePackerJsonPath: String): Void
+	{
+		if (!FileSystem.exists(texturePackerJsonPath))
+			throw new Exception('Asset $texturePackerJsonPath doesn\'t exist');
+
+		var json = File.getContent(texturePackerJsonPath);
+
+		var parser = new JsonParser<TexturePackerData>();
+		var data = parser.fromJson(json);
+
+		var dir = Path.directory(texturePackerJsonPath);
+
+		var bitmapData = SPEngine.getExternalBitmapDataFromFile('${dir}/${data.meta.image}');
+		
+		var framesData = loadFramesFromTexturePackerJson(json, data.frames);
+
+		self.loadFrames(bitmapData, framesData);
+	}
+
+	private static function loadFramesFromTexturePackerJson(json: String, frames: Array<TexturePackerFrameData>)
+	{
 		var framesData = new Array<SPFrameData>();
 
-		for(frame in data.frames)
+		for (frame in frames)
 		{
-			var frameData: SPFrameData =
+			var frameData:SPFrameData =
 			{
 				name: frame.filename,
 				sourceX: frame.frame.x,
@@ -116,6 +103,6 @@ class SPAnimatedSpriteExtension
 			framesData.push(frameData);
 		}
 
-		self.loadFrames(bitmapData, framesData);
+		return framesData;
 	}
 }

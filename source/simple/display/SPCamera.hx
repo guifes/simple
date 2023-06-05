@@ -40,8 +40,6 @@ class SPCamera extends Sprite implements ISPDestroyable
         addChild(_content);
         
         _content.addChild(_innerContent);
-
-        backgroundColor = SPColor.TRANSPARENT;
         
         zoom = 1;
         scrollX = 0;

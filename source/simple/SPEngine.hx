@@ -4,6 +4,7 @@ import guifes.collection.HashSet;
 import haxe.Log;
 import openfl.Assets;
 import openfl.Lib;
+import openfl.display.BitmapData;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
@@ -11,6 +12,7 @@ import openfl.events.EventType;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.events.TouchEvent;
+import openfl.utils.AssetCache;
 import simple.SPEvent;
 import simple.debug.SPDebugWidget;
 import simple.display.SPBitmapCache;
@@ -52,11 +54,14 @@ class SPEngine
     static var _timeStarted: Int;
 	static var _nextState: SPState;
 	static var _eventDispatcher: EventDispatcher;
+	static var _externalAssetCache: AssetCache;
 
 	public static function start(appContainer: Sprite, gameWidth_: Int, initialState: Void -> SPState)
 	{
         root = appContainer;
 		root.name = "root";
+
+		_externalAssetCache = new AssetCache();
 
 		_eventDispatcher = new EventDispatcher();
 		
@@ -156,6 +161,7 @@ class SPEngine
 		
 		_currentState.__internalUpdate(elapsed, deltaTime);
 
+		// TODO: This is allocating a small object every update unecessarily, pool?
 		_eventDispatcher.dispatchEvent(new SPEvent(SPEvent.UPDATE, elapsed, deltaTime));
 		
 		if (_nextState != null)
@@ -217,7 +223,7 @@ class SPEngine
 		_eventDispatcher.removeEventListener(type, listener);
 	}
 
-	public static function log(s: String, level: SPLogLevel)
+	public static function log(level: SPLogLevel, s: String)
 	{
 		s = switch(level)
 		{
@@ -227,6 +233,52 @@ class SPEngine
 		}
 		
 		Log.trace(s);
+	}
+
+	// External Asset Loading
+
+	public static function getExternalBitmapData(key: String)
+	{
+		var bitmapData = _externalAssetCache.getBitmapData(key);
+
+		return bitmapData;
+	}
+
+	public static function getExternalBitmapDataFromFile(path: String)
+	{
+		var bitmapData = _externalAssetCache.getBitmapData(path);
+		
+		if (bitmapData != null)
+		{			
+			return bitmapData;
+		}
+
+		bitmapData = BitmapData.fromFile(path);
+		
+		_externalAssetCache.setBitmapData(path, bitmapData);
+
+		return bitmapData;
+	}
+
+	public static function loadExternalBitmapDataFromBase64(key: String, string: String, type: String)
+	{
+		var bitmapData = _externalAssetCache.getBitmapData(key);
+
+		if (bitmapData != null)
+		{
+			return bitmapData;
+		}
+		
+		bitmapData = BitmapData.fromBase64(string, type);
+
+		_externalAssetCache.setBitmapData(key, bitmapData);
+		
+		return bitmapData;
+	}
+
+	public static function clearExternalAssetCache()
+	{
+		_externalAssetCache.clear();
 	}
 
 	////////////

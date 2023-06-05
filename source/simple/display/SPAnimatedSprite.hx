@@ -18,7 +18,9 @@ typedef SPAnimationNameData =
 {
 	frames: Array<String>,
 	frameRate: Int,
-	repeatCount: Int
+	repeatCount: Int,
+	flipX: Bool,
+	flipY: Bool
 }
 
 typedef SPAnimationIdData = SPAnimation;
@@ -27,7 +29,9 @@ typedef SPAnimation =
 {
 	frames: Array<Int>,
 	frameRate: Int,
-	repeatCount: Int
+	repeatCount: Int,
+	flipX: Bool,
+	flipY: Bool
 }
 
 typedef SPFrameData =
@@ -58,6 +62,7 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 {
 	public var currentAnimation(default, null): String;
 	public var position(never, set): Point;
+	public var bitmapData(default, null): BitmapData;
 
 	// Structure
 	private var _tilemap: Tilemap;
@@ -106,6 +111,8 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 
 	public function loadFrames(bitmapData: BitmapData, framesData: Array<SPFrameData>)
 	{
+		this.bitmapData = bitmapData;
+
 		_frames = new Array<SPFrame>();
 		_frameMap = new Map<String, Int>();
 		
@@ -152,28 +159,45 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 #end
 	}
 
-	public function loadNameAnimations(animations: Map<String, SPAnimationNameData>)
+	public function loadNameAnimations(animations: Map<String, SPAnimationNameData>, clear: Bool = true)
 	{
-		_animations = new Map<String, SPAnimation>();
-
-		for(key in animations.keys())
+		_timer.stop();
+		
+		if(clear || _animations == null)
 		{
-			var animation = animations.get(key);
-
+			_animations = new Map<String, SPAnimation>();
+		}
+		
+		for(key => animation in animations)
+		{
 			var spAnimation: SPAnimation =
 			{
 				frameRate: animation.frameRate,
 				repeatCount: animation.repeatCount,
-				frames: [for(frame in animation.frames) _frameMap.get(frame)]
+				frames: [for(frame in animation.frames) _frameMap.get(frame)],
+				flipX: animation.flipX,
+				flipY: animation.flipY
 			};
 
 			_animations.set(key, spAnimation);
 		}
 	}
 
-	public function loadIdAnimations(animations: Map<String, SPAnimationIdData>)
+	public function loadIdAnimations(animations: Map<String, SPAnimationIdData>, clear: Bool = true)
 	{
-		_animations = animations;
+		_timer.stop();
+
+		if(clear)
+		{
+			_animations = animations;
+		}
+		else
+		{
+			for(key => value in animations)
+			{
+				_animations.set(key, value);
+			}
+		}
 	}
 
 	public function setFrameByIndex(id: Int)
@@ -193,7 +217,7 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 	{
 		if(!_frameMap.exists(name))
 		{
-			SPEngine.log('Sprite doesn\'t have a frame named "$name"', SPLogLevel.WARNING);
+			SPEngine.log(SPLogLevel.WARNING, 'Sprite doesn\'t have a frame named "$name"');
 			return;
 		}
 
@@ -202,11 +226,17 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 		setFrameByIndex(id);
 	}
 
-	public function playAnimation(animationName:String)
+	public function playAnimation(animationName: String)
 	{
 		currentAnimation = animationName;
 
 		_currentAnimation = _animations.get(animationName);
+
+		if (_currentAnimation.frames.length == 0)
+		{
+			SPEngine.log(SPLogLevel.ERROR, 'Trying to play animtion "${animationName}" but it has no frames.');
+			return;
+		}
 
 		_currentFrameIndex = 0;
 		_currentRepeatCount = 0;
@@ -214,7 +244,23 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 		var id = _currentAnimation.frames[_currentFrameIndex];
 
 		setFrameByIndex(id);
-
+		
+		if(
+			(_currentAnimation.flipX && scaleX > 0) ||
+			(!_currentAnimation.flipX && scaleX < 0)
+		)
+		{
+			scaleX *= -1;
+		}
+		
+		if (
+			(_currentAnimation.flipY && scaleY > 0) ||
+			(!_currentAnimation.flipY && scaleY < 0)
+		)
+		{
+			scaleY *= -1;
+		}
+		
 		_timer.stop();
 		_timer.delay = 1000 / _currentAnimation.frameRate;
 		_timer.start();
