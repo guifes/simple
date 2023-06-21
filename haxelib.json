@@ -9,7 +9,6 @@
 	"contributors": ["guifes"],
 	"classPath": "source",
 	"dependencies": {
-		"haxe-utils": "git",
 		"json2object": "3.11.0",
 		"hxmath": "0.18.0",
 		"random": "1.4.1",
