@@ -46,7 +46,7 @@ class SPAnimatedSpriteAnimationEditorExtension
 				frameRate: animation.frameRate,
 				repeatCount: animation.repeatCount,
 				flipX: animation.flipX,
-				flipY: amimation.flipY
+				flipY: animation.flipY
 			};
 
 			animationsData.set(key, animationData);
