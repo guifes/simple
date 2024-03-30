@@ -3,6 +3,7 @@ package simple.debug;
 import haxe.ui.containers.TreeView;
 import haxe.ui.containers.TreeViewNode;
 import haxe.ui.macros.ComponentMacros;
+import haxe.ui.ComponentBuilder;
 import openfl.Lib;
 import openfl.display.DisplayObject;
 import openfl.display.DisplayObjectContainer;
@@ -22,7 +23,7 @@ class SPDisplayListWidget extends SPDebugWidget
 
 		this.width = DEFAULT_WIDTH;
 
-		this.contentView = ComponentMacros.buildComponent("simple/debug/xml/display_list.xml");
+		this.contentView = ComponentBuilder.fromFile("simple/debug/xml/display_list.xml");
 		
 		this.containerBox.addComponent(this.contentView);
 
