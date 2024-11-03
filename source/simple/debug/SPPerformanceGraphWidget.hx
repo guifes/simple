@@ -6,7 +6,7 @@ import haxe.ds.Vector;
 import haxe.ui.components.Label;
 import haxe.ui.containers.Box;
 import haxe.ui.containers.VBox;
-import haxe.ui.macros.ComponentMacros;
+import haxe.ui.ComponentBuilder;
 import openfl.display.Graphics;
 import openfl.display.Sprite;
 import openfl.events.Event;
@@ -41,7 +41,7 @@ class SPPerformanceGraphWidget extends SPDebugWidget
 		
 		this.addEventListener(Event.ENTER_FRAME, onEnter);
 
-		var root = ComponentMacros.buildComponent("simple/debug/xml/performance.xml");
+		var root = ComponentBuilder.fromFile("simple/debug/xml/performance.xml");
 
 		fpsLabel = root.findComponent("fpsLabel", Label, true, "id");
 		memLabel = root.findComponent("memLabel", Label, true, "id");

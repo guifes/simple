@@ -2,7 +2,6 @@ package simple.debug;
 
 import haxe.ui.containers.TreeView;
 import haxe.ui.containers.TreeViewNode;
-import haxe.ui.macros.ComponentMacros;
 import haxe.ui.ComponentBuilder;
 import openfl.Lib;
 import openfl.display.DisplayObject;

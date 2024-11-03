@@ -17,10 +17,7 @@ import openfl.display.Shape;
 typedef SPAnimationNameData =
 {
 	frames: Array<String>,
-	frameRate: Int,
-	repeatCount: Int,
-	flipX: Bool,
-	flipY: Bool
+	repeat: Int
 }
 
 typedef SPAnimationIdData = SPAnimation;
@@ -28,10 +25,7 @@ typedef SPAnimationIdData = SPAnimation;
 typedef SPAnimation =
 {
 	frames: Array<Int>,
-	frameRate: Int,
-	repeatCount: Int,
-	flipX: Bool,
-	flipY: Bool
+	repeat: Int
 }
 
 typedef SPFrameData =
@@ -45,7 +39,8 @@ typedef SPFrameData =
 	y: Int,
 	rotation: Float,
 	width: Int,
-	height: Int
+	height: Int,
+	duration: Int
 }
 
 typedef SPFrame =
@@ -55,7 +50,8 @@ typedef SPFrame =
 	y: Int,
 	rotation: Float,
 	width: Int,
-	height: Int
+	height: Int,
+	duration: Int
 }
 
 class SPAnimatedSprite extends Sprite implements ISPDestroyable
@@ -77,7 +73,7 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 	private var _animations: Map<String, SPAnimation>;
 	private var _currentAnimation: SPAnimation;
 	private var _currentFrameIndex: Int;
-	private var _currentRepeatCount: Int;
+	private var _currentRepeat: Int;
 	private var _currentAnimationFinishCallback: Noise -> Void;
 
 #if debug
@@ -135,7 +131,8 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 				y: frameData.y,
 				rotation: frameData.rotation,
 				width: frameData.width,
-				height: frameData.height
+				height: frameData.height,
+				duration: frameData.duration
 			};
 
 			_frames.push(frame);
@@ -172,11 +169,8 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 		{
 			var spAnimation: SPAnimation =
 			{
-				frameRate: animation.frameRate,
-				repeatCount: animation.repeatCount,
-				frames: [for(frame in animation.frames) _frameMap.get(frame)],
-				flipX: animation.flipX,
-				flipY: animation.flipY
+				repeat: animation.repeat,
+				frames: [for(frame in animation.frames) _frameMap.get(frame)]
 			};
 
 			_animations.set(key, spAnimation);
@@ -239,30 +233,15 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 		}
 
 		_currentFrameIndex = 0;
-		_currentRepeatCount = 0;
+		_currentRepeat = 0;
 
 		var id = _currentAnimation.frames[_currentFrameIndex];
+		var frame = _frames[id];
 
 		setFrameByIndex(id);
 		
-		if(
-			(_currentAnimation.flipX && scaleX > 0) ||
-			(!_currentAnimation.flipX && scaleX < 0)
-		)
-		{
-			scaleX *= -1;
-		}
-		
-		if (
-			(_currentAnimation.flipY && scaleY > 0) ||
-			(!_currentAnimation.flipY && scaleY < 0)
-		)
-		{
-			scaleY *= -1;
-		}
-		
 		_timer.stop();
-		_timer.delay = 1000 / _currentAnimation.frameRate;
+		_timer.delay = frame.duration;
 		_timer.start();
 	}
 
@@ -273,7 +252,7 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 			{
 				playAnimation(animationName);
 				
-				if(_currentAnimation.repeatCount < 0)
+				if(_currentAnimation.repeat == 0)
 					cb(Noise);
 				else
 					_currentAnimationFinishCallback = cb;
@@ -289,16 +268,13 @@ class SPAnimatedSprite extends Sprite implements ISPDestroyable
 	{
 		if(_currentFrameIndex == _currentAnimation.frames.length - 1)
 		{
-			if(_currentAnimation.repeatCount < 0 || _currentRepeatCount < _currentAnimation.repeatCount)
-			{
-				_currentRepeatCount++;
-			}
-			else
+			_currentRepeat++;
+
+			if(_currentAnimation.repeat > 0 && _currentRepeat >= _currentAnimation.repeat)
 			{
 				_timer.stop();
-				
-				if(_currentAnimationFinishCallback != null)
-				{
+
+				if (_currentAnimationFinishCallback != null) {
 					var temp = _currentAnimationFinishCallback;
 					_currentAnimationFinishCallback = null;
 					temp(Noise);

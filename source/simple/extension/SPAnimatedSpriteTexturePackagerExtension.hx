@@ -63,7 +63,9 @@ class SPAnimatedSpriteTexturePackagerExtension
 
 	public static function loadFramesFromTexturePackerJsonFile(self: SPAnimatedSprite, texturePackerJsonPath: String): Void
 	{
-		if (!FileSystem.exists(texturePackerJsonPath))
+		var absolutePath: String = FileSystem.absolutePath(texturePackerJsonPath);
+
+		if (!FileSystem.exists(absolutePath))
 			throw new Exception('Asset $texturePackerJsonPath doesn\'t exist');
 
 		var json = File.getContent(texturePackerJsonPath);
@@ -86,7 +88,7 @@ class SPAnimatedSpriteTexturePackagerExtension
 
 		for (frame in frames)
 		{
-			var frameData:SPFrameData =
+			var frameData: SPFrameData =
 			{
 				name: frame.filename,
 				sourceX: frame.frame.x,
@@ -97,7 +99,8 @@ class SPAnimatedSpriteTexturePackagerExtension
 				y: frame.spriteSourceSize.y,
 				width: frame.sourceSize.w,
 				height: frame.sourceSize.h,
-				rotation: 0
+				rotation: 0,
+				duration: 0
 			};
 
 			framesData.push(frameData);

@@ -14,7 +14,7 @@ typedef AnimationData =
 	public var flipX: Bool;
 	public var flipY: Bool;
 	public var frameRate: Int;
-	public var repeatCount: Bool;
+	public var repeatCount: Int;
 }
 
 typedef AnimationsData =
@@ -43,10 +43,7 @@ class SPAnimatedSpriteAnimationEditorExtension
 			var animationData: SPAnimationNameData = 
 			{
 				frames: animation.frames,
-				frameRate: animation.frameRate,
-				repeatCount: animation.repeatCount,
-				flipX: animation.flipX,
-				flipY: animation.flipY
+				repeat: animation.repeatCount,
 			};
 
 			animationsData.set(key, animationData);
